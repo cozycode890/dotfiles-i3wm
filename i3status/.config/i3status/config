@@ -1,0 +1,90 @@
+# ~/.config/i3status/config
+
+general {
+  output_format = "i3bar"
+  colors = true
+  interval = 1
+
+  color_good     = "#A7C080"  # green
+  color_degraded = "#DBBC7F"  # yellow
+  color_bad      = "#E67E80"  # red
+}
+
+# Thứ tự hiển thị (có thể thay đổi theo ý bạn)
+order += "volume master"
+order += "wireless _first_"
+#order += "ethernet _first_"
+#order += "disk /"
+#order += "memory"
+#order += "load"
+#order += "cpu_temperature 0"
+order += "battery 1"
+order += "tztime local"
+
+volume master {
+  format = " %volume "
+    format_muted = " %volume "
+    device = "default"
+    mixer = "Master"
+    mixer_idx = 0
+}
+
+wireless _first_ {
+#  format_up = " %essid %quality% %ip "
+  format_up = " %essid "
+  format_down = " Down "
+  format_quality = "%d"
+}
+
+ethernet _first_ {
+  format_up = " %ip (%speed) "
+  format_down = " Down "
+}
+
+disk "/" {
+  format = " %avail "
+  threshold_type = "percentage_avail"
+  low_threshold = 10
+  format_below_threshold = " LOW %percentage_avail "
+}
+
+memory {
+  format = " %used (%percentage_used) "
+  threshold_degraded = "10%"
+  threshold_critical = "5%"
+  format_degraded = " LOW %available "
+  unit = "Gi"
+  decimals = 0
+}
+
+load {
+  format = " %1min "
+  max_threshold = "4.0"
+  format_above_threshold = " HOT %1min "
+}
+
+cpu_temperature 0 {
+  format = " %degrees°C "
+  max_threshold = 80
+  format_above_threshold = " HOT %degrees°C "
+  # Nếu cần chỉ định sensor cụ thể:
+  # path = "/sys/devices/platform/coretemp.0/temp1_input"
+}
+
+battery 1 {
+  format = "%status %percentage %remaining"
+  format_down = " --  "
+  hide_seconds = true
+  integer_battery_capacity = true
+  last_full_capacity = true
+  status_chr = " +"
+  status_bat = ""
+  status_full = ""
+  low_threshold = 15
+  threshold_type = "percentage"
+}
+
+tztime local {
+  format = "  %a %d-%m-%Y   %H:%M "
+}
+

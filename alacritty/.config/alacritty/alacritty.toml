@@ -1,0 +1,73 @@
+[general]
+live_config_reload = true
+ipc_socket = true
+
+[env]
+
+[window]
+padding = { x = 5, y = 5 }
+dynamic_padding = false
+decorations = "None"
+opacity = 0.9
+startup_mode = "Windowed"
+
+[scrolling]
+history = 100000
+multiplier = 3
+
+[font]
+normal = { family = "FiraCode Nerd Font", style = "Regular" }
+bold = { family = "FiraCode Nerd Font", style = "Bold" }
+italic = { family = "FiraCode Nerd Font", style = "Italic" }
+bold_italic = { family = "FiraCode Nerd Font", style = "Bold Italic" }
+size = 14
+
+[colors.primary]
+background = '#2d353b'
+foreground = '#d3c6aa'
+
+[colors.cursor]
+cursor = "#d8dee9"
+text = "#2e3440"
+
+[colors.vi_mode_cursor]
+cursor = "#d8dee9"
+text = "#2e3440"
+
+[colors.search]
+matches = { background = "#88c0d0", foreground = "CellBackground" }
+
+[colors.selection]
+background = "#4c566a"
+text = "CellForeground"
+
+[colors.normal]
+black = '#475258'
+red = '#e67e80'
+green = '#a7c080'
+yellow = '#dbbc7f'
+blue = '#7fbbb3'
+magenta = '#d699b6'
+cyan = '#83c092'
+white = '#d3c6aa'
+
+# Bright colors
+[colors.bright]
+black = '#475258'
+red = '#e67e80'
+green = '#a7c080'
+yellow = '#dbbc7f'
+blue = '#7fbbb3'
+magenta = '#d699b6'
+cyan = '#83c092'
+white = '#d3c6aa'
+
+[colors.dim]
+black = "#373e4d"
+blue = "#68809a"
+cyan = "#6d96a5"
+green = "#809575"
+magenta = "#8c738c"
+red = "#94545d"
+white = "#aeb3bb"
+yellow = "#b29e75"
