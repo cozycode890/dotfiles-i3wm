@@ -103,9 +103,15 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-alias ls="eza --color=always --long --no-filesize --icons=always --no-time --no-user --no-permissions"
+alias ls="eza -a --color=always --long --no-filesize --icons=always --no-time --no-user --no-permissions"
 alias la="eza -la --color=always --icons=always"
+alias zshrc="nvim ~/.zshrc"
 alias cd="z"
 alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME/.config"
 
 eval "$(zoxide init zsh)"
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+# nạp key nếu agent đang chạy và key chưa có trong agent
+if ! ssh-add -l >/dev/null 2>&1; then
+  ssh-add ~/.ssh/id_ed25519 2>/dev/null
+fi
