@@ -21,3 +21,23 @@ vim.api.nvim_create_autocmd({ "BufEnter", "FileType" }, {
     vim.opt_local.formatoptions:remove({ "c", "r", "o" })
   end,
 })
+
+-- Thu nhỏ cột số dòng
+vim.opt.number = true
+vim.opt.relativenumber = true -- nếu bạn thích; không bắt buộc
+vim.opt.numberwidth = 2 -- mặc định 4; thử 2 (thậm chí 1)
+
+-- Hạn chế cột dấu (signs) chiếm chỗ
+vim.opt.signcolumn = "auto:1" -- tối đa 1 cột dấu
+
+-- Ẩn/thu gọn cột gập
+vim.opt.foldcolumn = "0" -- hoặc "auto:1" nếu bạn hay gập code
+
+-- (Tuỳ chọn) Giảm bớt dấu LSP để đỡ nở signcolumn
+-- Bỏ comment dòng dưới nếu muốn
+-- vim.diagnostic.config({ signs = false })
+
+-- (Tuỳ chọn nâng cao) Rút gọn statuscolumn về chỉ hiển thị số
+-- Bỏ comment hai dòng dưới nếu thấy bên trái vẫn còn thừa
+-- vim.o.statuscolumn = "%=%{v:relnum?v:relnum:v:lnum} "
+vim.opt.signcolumn = "no" -- chỉ dùng khi bạn đã quyết định bỏ hết dấu

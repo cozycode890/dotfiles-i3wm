@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# deps: dunst(dunstify), pamixer (PipeWire/PulseAudio)
+
+step=10
+case "$1" in
+up) pamixer --allow-boost --increase $step ;;
+down) pamixer --decrease $step ;;
+mute | toggle) pamixer --toggle-mute ;;
+esac
+
+vol=$(pamixer --get-volume)
+muted=$(pamixer --get-mute)
+
+if [ "$muted" = "true" ]; then
+  vol=0
+  title="🔇 Tắt tiếng"
+  icon="audio-volume-muted"
+else
+  title="Âm lượng"
+  icon="audio-volume-medium"
+fi
+
+dunstify -a "volume" -i "$icon" -t 1200 \
+  -h string:x-dunst-stack-tag:volume \
+  -h int:value:"$vol" "$title" "$vol%"

@@ -108,6 +108,8 @@ alias la="eza -la --color=always --icons=always"
 alias zshrc="nvim ~/.zshrc"
 alias cd="z"
 alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME/.config"
+alias us="ibus engine BambooUs::Candy"
+alias vn="ibus engine Bamboo::Candy"
 
 eval "$(zoxide init zsh)"
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"

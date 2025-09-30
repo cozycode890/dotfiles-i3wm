@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# deps: dunst(dunstify), brightnessctl
+
+step=10
+case "$1" in
+up) brightnessctl set +${step}% ;;
+down) brightnessctl set ${step}%- ;;
+esac
+
+percent=$(brightnessctl -m | awk -F, '{gsub(/%/,"",$4); print $4}')
+dunstify -a "brightness" -i "display-brightness-symbolic" -t 1200 \
+  -h string:x-dunst-stack-tag:brightness \
+  -h int:value:"$percent" "Độ sáng" "${percent}%"

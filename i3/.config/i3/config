@@ -131,12 +131,11 @@ bindsym $mod+minus scratchpad show
 
 # ─────────────────────────── 5. CHỤP MÀN HÌNH ──────────────────────────────
 # Ưu tiên flameshot; fallback scrot. Dùng --release để tránh bắn lặp.
-set $shot_dir ~/Pictures/Screenshots
-exec --no-startup-id sh -c 'mkdir -p "$shot_dir"'
+set $shot_dir Pictures/Screenshots
 
-bindsym --release Print exec --no-startup-id sh -c 'command -v flameshot >/dev/null && flameshot gui || scrot "$shot_dir/%Y-%m-%d_%H-%M-%S.png"'
-bindsym --release Shift+Print exec --no-startup-id sh -c 'command -v flameshot >/dev/null && flameshot full -p "$shot_dir" || scrot "$shot_dir/%Y-%m-%d_%H-%M-%S.png"'
-bindsym --release Control+Print exec --no-startup-id sh -c 'command -v flameshot >/dev/null && flameshot screen -p "$shot_dir" || scrot -s "$shot_dir/%Y-%m-%d_%H-%M-%S.png"'
+bindsym --release Print exec --no-startup-id sh -c 'command -v flameshot >/dev/null && flameshot gui || scrot -s "$shot_dir/%Y-%m-%d_%H-%M-%S.png"'
+bindsym --release $mod+Shift+s exec --no-startup-id sh -c 'command -v flameshot >/dev/null && flameshot gui || scrot "$shot_dir/%Y-%m-%d_%H-%M-%S.png"'
+bindsym --release $mod+Print exec --no-startup-id sh -c 'command -v flameshot >/dev/null && flameshot screen -p "$shot_dir" || scrot -s "$shot_dir/%Y-%m-%d_%H-%M-%S.png"'
 
 # ─────────────────────────── 6. ÂM LƯỢNG & SÁNG ────────────────────────────
 # Volume
@@ -230,7 +229,7 @@ exec --no-startup-id sh -c 'pactl unload-module module-echo-cancel 2>/dev/null; 
 exec --no-startup-id sh -c '! pidof easyeffects >/dev/null && easyeffects --gapplication-service'
 
 # Chạy nền Pavucontrol
-exec --no-startup-id sh -c '! pidof pavucontrol >/dev/null && pavucontrol --gapplication-service'
+#exec --no-startup-id pavucontrol --gapplication-service
 
 # Nạp preset sau 2 giây (đổi tên preset của bạn)
 exec --no-startup-id sh -c 'sleep 2; easyeffects -l "LoudnessCrystalEqualizer"'
@@ -272,7 +271,7 @@ client.unfocused        #2b3339 #2b3339 #2b3339 #2b3339 #2b3339
 client.focused_inactive #2b3339 #2b3339 #2b3339 #2b3339 #2b3339
 client.placeholder      #2b3339 #2b3339 #2b3339 #2b3339 #2b3339
 
-# ───────────────────────────── 11. TUỲ BIẾN THÊM ───────────────────────────
+# ───────────────────────────── 12. TUỲ BIẾN THÊM ───────────────────────────
 # Ví dụ assign app về workspace:
 # assign [class="Alacritty"] $ws1
 # assign [class="firefox"]   $ws2
