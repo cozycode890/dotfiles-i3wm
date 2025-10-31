@@ -1,0 +1,5 @@
+vim.diagnostic.config({
+  virtual_text = false, -- bớt chữ chạy trong buffer
+  update_in_insert = false, -- không cập nhật khi đang gõ
+  severity_sort = true,
+})

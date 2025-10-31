@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+SRC='@DEFAULT_AUDIO_SOURCE@'
+wpctl set-mute "$SRC" toggle
+
+state=$(wpctl get-volume "$SRC")
+if [[ "$state" == *"[MUTED]"* ]]; then
+  title="Mic muted"
+  icon="microphone-sensitivity-muted"
+  value=0
+else
+  title="Mic live"
+  icon="audio-input-microphone"
+  vol=$(echo "$state" | awk '{print $2}')
+  value=$(awk -v v="$vol" 'BEGIN{printf "%d", v*100}')
+fi
+
+command -v dunstify >/dev/null 2>&1 && dunstify -a "mic" -i "$icon" -t 1200 \
+  -h string:x-dunst-stack-tag:mic \
+  -h int:value:"$value" "$title" "${value}%"

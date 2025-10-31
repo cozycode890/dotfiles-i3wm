@@ -12,11 +12,10 @@ vol=$(pamixer --get-volume)
 muted=$(pamixer --get-mute)
 
 if [ "$muted" = "true" ]; then
-  vol=0
-  title="🔇 Tắt tiếng"
+  title="🔇 Muted"
   icon="audio-volume-muted"
 else
-  title="Âm lượng"
+  title="Volume"
   icon="audio-volume-medium"
 fi
 

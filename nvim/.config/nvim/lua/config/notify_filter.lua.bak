@@ -1,0 +1,10 @@
+local orig = vim.notify
+vim.notify = function(msg, level, opts)
+  if
+    type(msg) == "string"
+    and (msg:find("Classpath is incomplete") or msg:find("No delegateCommandHandler") or msg:find("Building workspace"))
+  then
+    return -- bỏ qua
+  end
+  return orig(msg, level, opts)
+end

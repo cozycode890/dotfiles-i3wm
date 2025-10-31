@@ -90,3 +90,26 @@ popup_menu = {
     focus = false;
     fade = false;
 };
+
+#################################
+#           Animations          #
+#################################
+# animations = (
+#   {
+#     triggers = ["close", "hide"];
+#     preset = "disappear";
+#     duration = 0.16;
+#     scale = 1.0;
+#   },
+#   {
+#     triggers = ["open", "show"];
+#     preset = "appear";
+#     duration = 0.16;
+#     scale = 0.98;
+#   },
+#   {
+#     triggers = ["geometry"];
+#     preset = "geometry-change";
+#     duration = 0.2;
+#   }
+# )

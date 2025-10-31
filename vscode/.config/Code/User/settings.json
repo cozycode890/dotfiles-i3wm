@@ -1,0 +1,141 @@
+{
+  "security.workspace.trust.untrustedFiles": "open",
+  "security.workspace.trust.enabled": false,
+  "editor.minimap.enabled": false,
+  "extensions.experimental.affinity": {
+    "asvetliakov.vscode-neovim": 1
+  },
+  "diffEditor.ignoreTrimWhitespace": false,
+  "zenMode.hideLineNumbers": false,
+  "notebook.cellToolbarLocation": {
+    "default": "right",
+    "jupyter-notebook": "left"
+  },
+  "files.autoSave": "afterDelay",
+  "notebook.formatOnSave.enabled": true,
+  "notebook.gotoSymbols.showAllSymbols": false,
+  "notebook.outline.showCodeCells": true,
+  "notebook.outline.showCodeCellSymbols": false,
+  "editor.mouseWheelZoom": true,
+  "markdown.preview.fontFamily": "'3270 Nerd Font'",
+  "terminal.integrated.fontFamily": "'Caskaydia Nerd Font'",
+  "markdown.preview.breaks": true,
+  "editor.largeFileOptimizations": false,
+  "terminal.integrated.cwd": "${fileDirname}",
+  "explorer.confirmDelete": false,
+  "editor.unicodeHighlight.ambiguousCharacters": false,
+  "editor.fontSize": 18,
+  "vim.handleKeys": {
+    "<C-a>": false,
+    "<C-b>": false,
+    "<C-c>": false,
+    "<C-d>": false,
+    "<C-e>": false,
+    "<C-f>": false,
+    "<C-g>": false,
+    "<C-h>": false,
+    "<C-i>": false,
+    "<C-j>": false,
+    "<C-k>": false,
+    "<C-l>": false,
+    "<C-n>": false,
+    "<C-o>": false,
+    "<C-p>": false,
+    "<C-q>": false,
+    "<C-r>": false,
+    "<C-s>": false,
+    "<C-t>": false,
+    "<C-u>": false,
+    "<C-v>": false,
+    "<C-w>": false,
+    "<C-x>": false,
+    "<C-y>": false,
+    "<C-z>": false,
+    "<C-/>": false,
+    "<C-Tab>": false,
+    "<C-Shift-Tab>": false,
+    "<C-PageUp>": false,
+    "<C-PageDown>": false,
+    "<Tab>": false,
+    "<S-Tab": false
+  },
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": [
+        "<tab>"
+      ],
+      "commands": [
+        "editor.action.indentLines"
+      ]
+    },
+    {
+      "before": [
+        "<S-Tab>"
+      ],
+      "commands": [
+        "editor.action.outdentLines"
+      ]
+    }
+  ],
+  "vim.visualModeKeyBindingsNonRecursive": [
+    {
+      "before": [
+        "<tab>"
+      ],
+      "commands": [
+        "editor.action.indentLines"
+      ]
+    },
+    {
+      "before": [
+        "<S-Tab>"
+      ],
+      "commands": [
+        "editor.action.outdentLines"
+      ]
+    }
+  ],
+  "editor.fontFamily": "CaskaydiaCove Nerd Font, Consolas, 'Courier New', monospace",
+  "editor.fontLigatures": true,
+  "typescript.suggest.paths": false,
+  "javascript.suggest.paths": false,
+  "workbench.secondarySideBar.defaultVisibility": "hidden",
+  "chat.agent.enabled": false,
+  "terminal.integrated.fontSize": 16,
+  "redhat.telemetry.enabled": false,
+  "workbench.navigationControl.enabled": false,
+  "chat.commandCenter.enabled": false,
+  "workbench.layoutControl.enabled": false,
+  "window.commandCenter": false,
+  "workbench.secondarySideBar.showLabels": false,
+  "editor.autoIndentOnPaste": true,
+  "everforest.italicKeywords": true,
+  "settingsSync.ignoredExtensions": [
+    "vscode.theme-kimbie-dark"
+  ],
+  "workbench.colorTheme": "Everforest Dark",
+  "everforest.darkContrast": "hard",
+  "everforest.highContrast": true,
+  "terminal.integrated.fontLigatures.enabled": true,
+  "jdk.telemetry.enabled": true,
+  "editor.formatOnSave": true,
+  // Dùng radian làm R terminal (nếu có), nếu không hãy để "/usr/bin/R"
+  "r.rterm.linux": "/usr/bin/radian",
+  "r.bracketedPaste": true,
+  // Vẽ đồ thị trong VS Code qua httpgd
+  "r.plot.useHttpgd": true,
+  // Tự attach packages (nếu bạn muốn)
+  "r.alwaysUseActiveTerminal": true,
+  // Lint & format
+  "r.linting.enabled": true,
+  "r.linting.lintrExecutable": "/usr/bin/R", // VS Code gọi R để chạy lintr
+  "r.formatting.style": "styler",
+  "window.menuBarVisibility": "hidden",
+  "window.density.editorTabHeight": "compact",
+  "window.titleBarStyle": "native",
+  "editor.lineNumbers": "relative",
+  "quarto.visualEditor.lineNumbers": true,
+  "vim.useSystemClipboard": true,
+  "workbench.sideBar.location": "right",
+  "workbench.activityBar.location": "hidden"
+}

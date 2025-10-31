@@ -1,0 +1,29 @@
+return {
+  "neovim/nvim-lspconfig",
+  opts = {
+    -- Giảm hiển thị chói mắt từ diagnostics
+    diagnostics = {
+      virtual_text = false, -- tắt chữ nổi trong code
+      update_in_insert = false,
+      severity_sort = true,
+      underline = true,
+      -- Chỉ hiển thị từ WARN trở lên ở signcolumn
+      signs = { severity = { min = vim.diagnostic.severity.WARN } },
+    },
+    -- Lọc thông báo LSP (Info/Log)
+    setup = {
+      -- áp dụng cho mọi server; nếu muốn chỉ jdtls, đặt dưới servers.jdtls.handlers
+      ["*"] = function(server, opts)
+        opts.handlers = opts.handlers or {}
+        local t = vim.lsp.protocol.MessageType
+        opts.handlers["window/showMessage"] = function(_, result, ctx, config)
+          if result.type == t.Info or result.type == t.Log then
+            return -- bỏ qua Info/Log
+          end
+          return vim.lsp.handlers["window/showMessage"](_, result, ctx, config)
+        end
+        opts.handlers["window/logMessage"] = function() end -- tắt logMessage
+      end,
+    },
+  },
+}

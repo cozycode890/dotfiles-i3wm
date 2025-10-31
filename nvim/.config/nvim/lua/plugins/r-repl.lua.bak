@@ -1,0 +1,29 @@
+return {
+	{
+		"R-nvim/R.nvim",
+		ft = { "r", "rmd", "quarto" },
+		opts = {
+			R_app = vim.fn.executable("radian") == 1 and "radian" or "R", -- ưu tiên radian
+			hook = {
+				on_filetype = function()
+					-- ví dụ keymaps: gửi dòng, đoạn, hàm…
+					vim.keymap.set("n", "<leader>rr", "<Plug>RStart", { buffer = true, desc = "Start R" })
+					vim.keymap.set("n", "<leader>rl", "<Plug>RSendLine", { buffer = true, desc = "Send line" })
+					vim.keymap.set(
+						"v",
+						"<leader>rs",
+						"<Plug>RSendSelection",
+						{ buffer = true, desc = "Send selection" }
+					)
+					vim.keymap.set(
+						"n",
+						"<leader>rp",
+						"<Plug>RSendParagraph",
+						{ buffer = true, desc = "Send paragraph" }
+					)
+					vim.keymap.set("n", "<leader>rf", "<Plug>RSendFunction", { buffer = true, desc = "Send function" })
+				end,
+			},
+		},
+	},
+}

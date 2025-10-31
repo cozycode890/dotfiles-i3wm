@@ -8419,3 +8419,21 @@ read if you used those and something break with a version upgrade you're on your
 @define-color popover_fg_color #fffbef;
 @define-color shade_color rgba(255, 251, 239, 0.12);
 @define-color scrollbar_outline_color rgba(255, 251, 239, 0.12);
+
+/* Làm popup “sát viền” (bỏ ảo viền do shadow) */
+popover > contents,
+popover > arrow {
+  box-shadow: none;              /* tắt viền giả do đổ bóng */
+}
+
+/* Nếu muốn một đường viền mảnh thật sự thay cho shadow */
+popover > contents {
+  border: 1px solid rgba(255, 251, 239, 0.12);
+  /* (tuỳ chọn) nới/siết đệm trong nếu thấy dày */
+  padding: 4px; /* mặc định của bạn là 6px */
+}
+
+/* Giảm khoảng ngoài của menu con (nếu thấy lệch quá xa) */
+menubar > item popover.menu popover.menu {
+  margin-left: 4px; /* từ 9px còn 4px */
+}

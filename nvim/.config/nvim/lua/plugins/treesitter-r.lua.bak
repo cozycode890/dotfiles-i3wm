@@ -1,0 +1,23 @@
+return {
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = function(_, opts)
+      opts.ensure_installed = vim.tbl_deep_extend("force", opts.ensure_installed or {}, {
+        "r",
+        "markdown",
+        "rnoweb",
+        "yaml",
+        -- gợi ý thêm cho workflow R:
+        "bash",
+        "lua",
+        "json",
+        "latex",
+      })
+      -- Tùy chọn: ưu tiên git để tải grammar nhanh và ổn định
+      require("nvim-treesitter.install").prefer_git = true
+      -- Tùy chọn (nếu từng bị lỗi quyền ghi):
+      -- require("nvim-treesitter.install").compilers = { "gcc", "clang" }
+      -- opts.parser_install_dir = vim.fn.stdpath("data") .. "/treesitter"
+    end,
+  },
+}

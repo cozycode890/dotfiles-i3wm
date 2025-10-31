@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Lấy trạng thái floating của cửa sổ đang focus: "user_on" / "auto_on" / "auto_off"/"user_off"
+state="$(i3-msg -t get_tree | jq -r '.. | objects | select(.focused==true)? | .floating // empty')"
+
+if [[ "$state" == "user_on" || "$state" == "auto_on" ]]; then
+  i3-msg 'mode "resize-floating"'
+else
+  i3-msg 'mode "resize-tiling"'
+fi

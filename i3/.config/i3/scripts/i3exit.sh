@@ -17,7 +17,7 @@ reboot)
   systemctl reboot
   ;;
 shutdown)
-  systemctl poweroff
+  shutdown now
   ;;
 *)
   echo "Usage: $0 {lock|logout|suspend|hibernate|reboot|shutdown}"

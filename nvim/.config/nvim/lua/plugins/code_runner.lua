@@ -2,6 +2,7 @@
 return {
   {
     "CRAG666/code_runner.nvim",
+    enabled = false,
     cmd = { "RunCode", "RunFile", "RunProject", "RunClose", "CRFiletype", "CRProjects" },
     keys = {
       { "<leader>rr", "<cmd>RunCode<CR>", mode = "n", silent = false, desc = "Run Code" },

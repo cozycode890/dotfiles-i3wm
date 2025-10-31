@@ -194,4 +194,46 @@ return {
       },
     },
   },
+
+  -- -- lua/plugins/snacks.lua (or wherever you set opts)
+  -- {
+  --   "folke/snacks.nvim",
+  --   opts = {
+  --     picker = {
+  --       sources = {
+  --         explorer = {
+  --           layout = {
+  --             preset = "sidebar",
+  --             width = 10, -- or a fraction like 0.28
+  --             min_width = 5, -- optional
+  --             preview = false, -- optional
+  --           },
+  --         },
+  --       },
+  --     },
+  --   },
+  -- },
+  {
+    -- LazyVim dùng snacks.nvim để hiển thị notify
+    {
+      "folke/snacks.nvim",
+      opts = function(_, opts)
+        opts = opts or {}
+        opts.notifier = vim.tbl_deep_extend("force", opts.notifier or {}, {
+          -- Cách A: tắt toàn bộ LSP progress
+          lsp = { progress = { enabled = false } },
+
+          -- (tuỳ chọn) Cách B: chỉ chặn thông báo có chữ "jdtls"
+          filter = function(n)
+            local t = (n.title or "") .. " " .. (n.msg or "")
+            if t:lower():find("jdtls") then
+              return false -- bỏ qua
+            end
+            return true
+          end,
+        })
+        return opts
+      end,
+    },
+  },
 }

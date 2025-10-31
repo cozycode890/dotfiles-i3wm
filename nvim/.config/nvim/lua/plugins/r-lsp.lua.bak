@@ -1,0 +1,13 @@
+return {
+	{
+		"neovim/nvim-lspconfig",
+		opts = {
+			servers = {
+				r_language_server = {
+					-- Nếu dùng radian làm terminal REPL thì không ảnh hưởng LSP
+					-- LSP chỉ cần R gói "languageserver" là chạy.
+				},
+			},
+		},
+	},
+}

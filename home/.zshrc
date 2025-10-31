@@ -103,17 +103,37 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-alias ls="eza -a --color=always --long --no-filesize --icons=always --no-time --no-user --no-permissions"
+alias ls="eza -a --color=always --long --no-filesize --icons=always --no-time --no-user --no-permissions --no-symlinks"
+alias ll="eza -a --color=always --long --no-filesize --icons=always --no-time --no-user --no-permissions --no-symlinks"
 alias la="eza -la --color=always --icons=always"
 alias zshrc="nvim ~/.zshrc"
 alias cd="z"
-alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME/.config"
-alias us="ibus engine BambooUs::Candy"
-alias vn="ibus engine Bamboo::Candy"
+alias tb="adb shell pm disable-user --user 0"
+alias db="adb shell pm uninstall -k --user 0"
+alias ab="adb shell cmd package install-existing --user 0"
+alias xborders='~/.local/bin/xborders --border-radius 10 --border-width 2 --disable-version-warning --border-rgba "#d4be98"'
 
-eval "$(zoxide init zsh)"
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
-# nạp key nếu agent đang chạy và key chưa có trong agent
+
 if ! ssh-add -l >/dev/null 2>&1; then
   ssh-add ~/.ssh/id_ed25519 2>/dev/null
 fi
+
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+	rm -f -- "$tmp"
+}
+alias yazi=y
+
+export EDITOR=nvim
+export VISUAL=nvim
+export JAVA_HOME=/usr/lib/jvm/default
+export PATH="$JAVA_HOME/bin:$PATH"
+
+ZSH_HIGHLIGHT_STYLES[comment]='fg=8,dim'
+
+eval "$(zoxide init zsh)"
+# eval "$(starship init zsh)"

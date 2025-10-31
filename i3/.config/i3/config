@@ -11,10 +11,12 @@
 
 # ────────────────────────────── 0. BIẾN CƠ BẢN ──────────────────────────────
 set $mod Mod4
-set $term alacritty
-set $menu dmenu_run -i -nb '#1f222d' -nf '#81a1c1' -sb '#81a1c1' -sf '#1f222d' -fn 'OperatorMonoBook:bold:pixelsize=18'
-set $fileman thunar
+set $term kitty
+set $menu dmenu_run -i -b -nb '#1f222d' -nf '#81a1c1' -sb '#81a1c1' -sf '#1f222d' -fn 'OperatorMonoBook:bold:pixelsize=18' -p 'Run:'
+set $fileman kitty --hold yazi
 set $browser firefox-developer-edition
+set $sound_manager pavucontrol
+set $bluetooth_manager Blueman-manager
 set $up k
 set $down j
 set $left h
@@ -29,9 +31,9 @@ focus_on_window_activation smart
 force_display_urgency_hint 500 ms
 
 # Gaps & borders (đẹp hơn khi còn 1 cửa sổ)
-gaps inner 10
-gaps outer 8
-for_window [class="^.*"] border pixel 1
+gaps inner 5
+gaps outer 0
+for_window [class="^.*"] border pixel 0
 #smart_gaps off
 #smart_borders on
 hide_edge_borders none
@@ -71,9 +73,9 @@ bindsym $mod+Shift+8 move container to workspace $ws8
 bindsym $mod+Shift+9 move container to workspace $ws9
 
 # next/previous workspace
-bindsym Mod1+Tab workspace next
-bindsym Mod1+Shift+Tab workspace prev
-bindsym $mod+Tab workspace back_and_forth
+bindsym Mod1+Tab workspace back_and_forth
+bindsym $mod+Shift+Tab workspace prev
+bindsym $mod+Tab workspace next
 
 #navigate workspaces next / previous
 bindsym Mod1+Ctrl+Right workspace next
@@ -84,6 +86,7 @@ bindsym $mod+Return exec --no-startup-id $term
 bindsym $mod+Shift+Return exec --no-startup-id $fileman
 bindsym $mod+d exec --no-startup-id $menu
 bindsym $mod+b exec --no-startup-id $browser
+bindsym $mod+p exec --no-startup-id $sound_manager
 
 # Thoát / Reload / Restart i3
 bindsym $mod+Shift+e exec --no-startup-id i3-nagbar -t warning -m 'Exit i3?' -b 'Yes' 'i3-msg exit'
@@ -93,6 +96,12 @@ bindsym $mod+Shift+r restart
 # Kill focused window
 bindsym $mod+q kill
 
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus child
 # ───────────────────────── 4. DI CHUYỂN & LAYOUT ───────────────────────────
 # change focus
 bindsym $mod+$left focus left
@@ -119,8 +128,9 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 # Split/Layout
-bindsym $mod+v split v
-bindsym $mod+Shift+v split h
+# bindsym $mod+v split v
+# bindsym $mod+Shift+v split h
+bindsym $mod+v split toggle
 bindsym $mod+f fullscreen toggle
 
 # Floating/Scratchpad
@@ -142,14 +152,20 @@ bindsym --release $mod+Print exec --no-startup-id sh -c 'command -v flameshot >/
 bindsym XF86AudioRaiseVolume exec --no-startup-id ~/.local/bin/notify-volume up
 bindsym XF86AudioLowerVolume exec --no-startup-id ~/.local/bin/notify-volume down
 bindsym XF86AudioMute        exec --no-startup-id ~/.local/bin/notify-volume toggle
-bindsym XF86AudioMicMute     exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+bindsym XF86AudioMicMute     exec --no-startup-id ~/.local/bin/mic-toggle
 
 # Brightness
 bindsym XF86MonBrightnessUp   exec --no-startup-id ~/.local/bin/notify-brightness up
 bindsym XF86MonBrightnessDown exec --no-startup-id ~/.local/bin/notify-brightness down
 
+# Media
+bindsym XF86AudioPlay  exec playerctl -a play-pause
+bindsym XF86AudioStop  exec playerctl -a pause
+bindsym XF86AudioNext  exec playerctl -a next
+bindsym XF86AudioPrev  exec playerctl -a previous
+
 # ─────────────────────────────── 7. CHẾ ĐỘ RESIZE ──────────────────────────
-mode "resize" {
+mode "resize-tiling" {
         # These bindings trigger as soon as you enter the resize mode
 
         # Pressing left will shrink the window’s width.
@@ -162,16 +178,39 @@ mode "resize" {
        bindsym $right      resize grow width 10 px or 10 ppt
 
         # same bindings, but for the arrow keys
-       bindsym Left        resize shrink width 1 px or 1 ppt
-       bindsym Down        resize grow height 1 px or 1 ppt
-       bindsym Up          resize shrink height 1 px or 1 ppt
-       bindsym Right       resize grow width 1 px or 1 ppt
+       bindsym Left        resize shrink width 5 px or 5 ppt
+       bindsym Down        resize grow height 5 px or 5 ppt
+       bindsym Up          resize shrink height 5 px or 5 ppt
+       bindsym Right       resize grow width 5 px or 5 ppt
 
         # back to normal: Enter or Escape
        bindsym Return mode "default"
        bindsym Escape mode "default"
 }
-bindsym $mod+r mode "resize"
+
+mode "resize-floating" {
+        # These bindings trigger as soon as you enter the resize mode
+
+        # Pressing left will shrink the window’s width.
+        # Pressing right will grow the window’s width.
+        # Pressing up will shrink the window’s height.
+        # Pressing down will grow the window’s height.
+       bindsym $left       resize shrink width 100 px or 100 ppt
+       bindsym $down       resize grow height 100 px or 100 ppt
+       bindsym $up         resize shrink height 100 px or 100 ppt
+       bindsym $right      resize grow width 100 px or 100 ppt
+
+        # same bindings, but for the arrow keys
+       bindsym Left        resize shrink width 10 px or 10 ppt
+       bindsym Down        resize grow height 10 px or 10 ppt
+       bindsym Up          resize shrink height 10 px or 10 ppt
+       bindsym Right       resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape
+       bindsym Return mode "default"
+       bindsym Escape mode "default"
+}
+bindsym $mod+r exec --no-startup-id ~/.local/bin/i3-smart-resize
 
 # ─────────────────────────── 8. LOGOUT... MODE ─────────────────────────────
 bindsym $mod+0 mode "$mode_system"
@@ -199,9 +238,25 @@ for_window [window_role="pop-up"] floating enable
 for_window [window_role="bubble"] floating enable
 
 # App GUI hay dùng: nổi + center
-for_window [class="Pavucontrol|Blueman-manager|Nm-connection-editor|Lxappearance|Qtconfig-qt4|qt5ct|Arandr"] floating enable, move position center
+for_window [class="$sound_manager|$bluetooth_manager|Nm-connection-editor|Lxappearance|Qtconfig-qt4|qt5ct|Arandr|easyeffects"] floating enable, move position center
+
+# firefox-developer-edition popups -> float by default
+for_window [class="firefox-developer-edition" window_role="About|Dialog|Organizer"] floating enable
+for_window [class="firefox-developer-edition" window_type="dialog"] floating enable
+for_window [class="firefox-developer-edition" title="Library|Donwloads"] floating enable
+
+# flameshot
+for_window [class="flameshot" window_type="normal"] floating enable
+
+# Tự động đưa Spotify vào scratchpad khi mở
+for_window [class="Spotify"] move to scratchpad
+
+for_window [class="Xfce4-taskmanager"] floating enable
 
 # ────────────────────────────── 9. AUTOSTART SAFE ──────────────────────────
+
+# NumlockX
+exec --no-startup-id numlockx
 
 # Nạp Xresources (cursor, DPI…)
 exec_always --no-startup-id xrdb -merge ~/.Xresources
@@ -231,6 +286,9 @@ exec --no-startup-id sh -c '! pidof easyeffects >/dev/null && easyeffects --gapp
 # Chạy nền Pavucontrol
 #exec --no-startup-id pavucontrol --gapplication-service
 
+# Run Bluetooth applet
+exec --no-startup-id blueman-applet
+
 # Nạp preset sau 2 giây (đổi tên preset của bạn)
 exec --no-startup-id sh -c 'sleep 2; easyeffects -l "LoudnessCrystalEqualizer"'
 
@@ -240,13 +298,16 @@ exec_always --no-startup-id picom -c ~/.config/picom/picom.conf
 # Nitrogen
 exec_always --no-startup-id nitrogen --restore
 
+# Xborders
+exec_always --no-startup-id ~/.local/bin/xborders --border-radius 10 --border-width 2 --disable-version-warning --border-rgba "#d4be98"
+
 # ────────────────────────────── 10. THANH BAR ──────────────────────────────
 bar {
-    height 25
-	  position top
-    font pango:OperatorMono Nerd Font 11
-    status_command bash -lc 'i3status -c ~/.config/i3status/config | ~/.local/bin/i3status-mic'
-    tray_padding 1
+    height 23
+	  position bottom
+    font pango:OperatorMono Nerd Font Bold 10
+    status_command i3blocks 
+    tray_padding 2
     strip_workspace_numbers yes
 
     colors {
@@ -260,20 +321,14 @@ bar {
       active_workspace   #272E33    #374145     #7FBBB3    # bg0 border, bg2, blue text
       inactive_workspace #272E33    #272E33     #859289    # bg0, gray1
       urgent_workspace   #E67E80    #272E33     #E67E80    # red
-      binding_mode       #DBBC7F    #DBBC7F     #272E33    # yellow bg, dark text   
+      binding_mode       #A7C080    #272E33     #DBBC7F    # yellow bg, dark text   
     }
 }
 
 # ───────────────────────────── 11. WINDOWS COLOR SETTINGS  ─────────────────
 ## class                 border  backgr. text    indicator child_border                                                                     
-client.focused          #d4be98 #d4be98 #d4be98 #d4be98 #d4be98 
-client.unfocused        #2b3339 #2b3339 #2b3339 #2b3339 #2b3339                                                                            
+client.focused          #d4be98 #d4be98 #d4be98 #d4be98 #d4be98
+client.unfocused        #2b3339 #2b3339 #2b3339 #2b3339 #2b3339
+
 client.focused_inactive #2b3339 #2b3339 #2b3339 #2b3339 #2b3339
 client.placeholder      #2b3339 #2b3339 #2b3339 #2b3339 #2b3339
-
-# ───────────────────────────── 12. TUỲ BIẾN THÊM ───────────────────────────
-# Ví dụ assign app về workspace:
-# assign [class="Alacritty"] $ws1
-# assign [class="firefox"]   $ws2
-# include ~/.config/i3/config.local
-# ======================================================================

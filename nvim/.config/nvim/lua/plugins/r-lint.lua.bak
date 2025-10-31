@@ -1,0 +1,47 @@
+return {
+	{
+		"mfussenegger/nvim-lint",
+		opts = {
+			linters_by_ft = {
+				r = { "lintr" },
+				rmd = { "lintr" }, -- nếu muốn thử lint trong Rmd
+			},
+			linters = {
+				lintr = {
+					cmd = "Rscript",
+					stdin = true,
+					args = {
+						"-e",
+						[[
+            con <- file("stdin"); code <- readLines(con, warn=FALSE); close(con);
+            lintr::lint(text = code) |>
+              lapply(function(l) sprintf("%s:%d:%d:%s:%s",
+                      l$filename %||% "", l$line_number %||% 1, l$column_number %||% 1,
+                      l$type %||% "style", gsub("\n"," ", l$message))) |>
+              writeLines()
+            ]],
+					},
+					ignore_exitcode = true,
+					parser = function(output, _)
+						local diagnostics = {}
+						for _, line in ipairs(vim.split(output, "\n")) do
+							local file, lnum, col, sev, msg = line:match("^(.-):(%d+):(%d+):([^:]+):(.+)$")
+							if lnum then
+								table.insert(diagnostics, {
+									lnum = tonumber(lnum) - 1,
+									col = tonumber(col) - 1,
+									message = vim.trim(msg),
+									severity = ({
+										error = vim.diagnostic.severity.ERROR,
+										warning = vim.diagnostic.severity.WARN,
+									})[sev] or vim.diagnostic.severity.INFO,
+								})
+							end
+						end
+						return diagnostics
+					end,
+				},
+			},
+		},
+	},
+}
