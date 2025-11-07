@@ -1,29 +1,18 @@
-# ======================================================================
-# i3 CONFIG — CLEAN, ORDERED, COMMENTED
-# Generated: 2025-09-26 12:06:23
-# Notes:
-# - Tối ưu thứ tự, comment, phân đoạn rõ ràng, độ dài dòng hợp lý.
-# - Giữ phím quen thuộc; thêm guard cho autostart; bật smart gaps/borders.
-# - Không phụ thuộc hard-code: mọi lệnh đều có fallback (pamixer→amixer,
-#   brightnessctl→xbacklight, flameshot→scrot, i3status-mic→i3status, dex guard).
-# - Bạn có thể tuỳ biến biến $term/$menu/$fileman/$browser/$locker phía dưới.
-# ======================================================================
-
 # ────────────────────────────── 0. BIẾN CƠ BẢN ──────────────────────────────
 set $mod Mod4
 set $term kitty
-set $menu dmenu_run -i -b -nb '#1f222d' -nf '#81a1c1' -sb '#81a1c1' -sf '#1f222d' -fn 'OperatorMonoBook:bold:pixelsize=18' -p 'Run:'
-set $fileman kitty --hold yazi
+set $menu ~/.local/bin/dmenu-tokyonight -p 'Run:'
+set $fileman kitty yazi
 set $browser firefox-developer-edition
 set $sound_manager pavucontrol
 set $bluetooth_manager Blueman-manager
+set $text_editor neovide
 set $up k
 set $down j
 set $left h
 set $right l
 
 # ───────────────────────────── 1. CHUNG & GAPS ─────────────────────────────
-#font pango:OperatorMono Nerd Font 12
 floating_modifier $mod
 focus_follows_mouse yes
 mouse_warping output
@@ -39,7 +28,6 @@ for_window [class="^.*"] border pixel 0
 hide_edge_borders none
 
 # ────────────────────── 2. WORKSPACE (đặt tên rõ ràng) ─────────────────────
-# Nếu chưa cài font icon, tên đơn giản vẫn chạy bình thường.
 set $ws1  "1"
 set $ws2  "2"
 set $ws3  "3"
@@ -87,6 +75,7 @@ bindsym $mod+Shift+Return exec --no-startup-id $fileman
 bindsym $mod+d exec --no-startup-id $menu
 bindsym $mod+b exec --no-startup-id $browser
 bindsym $mod+p exec --no-startup-id $sound_manager
+bindsym $mod+n exec --no-startup-id $text_editor
 
 # Thoát / Reload / Restart i3
 bindsym $mod+Shift+e exec --no-startup-id i3-nagbar -t warning -m 'Exit i3?' -b 'Yes' 'i3-msg exit'
@@ -102,6 +91,7 @@ bindsym $mod+e layout toggle split
 
 bindsym $mod+a focus parent
 bindsym $mod+Shift+a focus child
+
 # ───────────────────────── 4. DI CHUYỂN & LAYOUT ───────────────────────────
 # change focus
 bindsym $mod+$left focus left
@@ -128,8 +118,6 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 # Split/Layout
-# bindsym $mod+v split v
-# bindsym $mod+Shift+v split h
 bindsym $mod+v split toggle
 bindsym $mod+f fullscreen toggle
 
@@ -248,10 +236,20 @@ for_window [class="firefox-developer-edition" title="Library|Donwloads"] floatin
 # flameshot
 for_window [class="flameshot" window_type="normal"] floating enable
 
+for_window [class="Nwg-look"] floating enable
+
+for_window [class="org.gnome.SoundRecorder" window_type="normal"] floating enable
+
 # Tự động đưa Spotify vào scratchpad khi mở
 for_window [class="Spotify"] move to scratchpad
 
 for_window [class="Xfce4-taskmanager"] floating enable
+
+for_window [class="Thunar"] floating enable
+
+for_window [class="r_x11|R_x11"] floating enable
+
+for_window [class="matplotlib"] floating enable
 
 # ────────────────────────────── 9. AUTOSTART SAFE ──────────────────────────
 
@@ -299,36 +297,59 @@ exec_always --no-startup-id picom -c ~/.config/picom/picom.conf
 exec_always --no-startup-id nitrogen --restore
 
 # Xborders
-exec_always --no-startup-id ~/.local/bin/xborders --border-radius 10 --border-width 2 --disable-version-warning --border-rgba "#d4be98"
+# exec_always --no-startup-id ~/.local/bin/xborders --border-radius 10 --border-width 2 --disable-version-warning --border-rgba "#d4be98"
+exec_always --no-startup-id ~/.local/bin/xborders --border-radius 10 --border-width 2 --disable-version-warning --border-rgba "#7aa2f7"
 
 # ────────────────────────────── 10. THANH BAR ──────────────────────────────
+# bar {
+#     height 23
+# 	  position bottom
+#     font pango:OperatorMono Nerd Font Bold 10
+#     status_command i3blocks 
+#     tray_padding 2
+#     strip_workspace_numbers yes
+#
+#     colors {
+#       # i3bar
+#       background        #272E33    # bg0
+#       statusline        #D3C6AA    # fg
+#       separator         #272E33    # bg0
+#
+#       #                  border     background  text
+#       focused_workspace  #A7C080    #2E383C     #D3C6AA    # green border, bg1, fg
+#       active_workspace   #272E33    #374145     #7FBBB3    # bg0 border, bg2, blue text
+#       inactive_workspace #272E33    #272E33     #859289    # bg0, gray1
+#       urgent_workspace   #E67E80    #272E33     #E67E80    # red
+#       binding_mode       #A7C080    #272E33     #DBBC7F    # yellow bg, dark text   
+#     }
+# }
+
 bar {
     height 23
-	  position bottom
+    position bottom
     font pango:OperatorMono Nerd Font Bold 10
-    status_command i3blocks 
+    status_command i3blocks
     tray_padding 2
     strip_workspace_numbers yes
 
     colors {
       # i3bar
-      background        #272E33    # bg0
-      statusline        #D3C6AA    # fg
-      separator         #272E33    # bg0
+      background        #1a1b26
+      statusline        #c0caf5
+      separator         #1a1b26
 
-      #                  border     background  text
-      focused_workspace  #A7C080    #2E383C     #D3C6AA    # green border, bg1, fg
-      active_workspace   #272E33    #374145     #7FBBB3    # bg0 border, bg2, blue text
-      inactive_workspace #272E33    #272E33     #859289    # bg0, gray1
-      urgent_workspace   #E67E80    #272E33     #E67E80    # red
-      binding_mode       #A7C080    #272E33     #DBBC7F    # yellow bg, dark text   
+      #                    border    background  text
+      focused_workspace    #7aa2f7   #7aa2f7     #1a1b26
+      active_workspace     #1a1b26   #292e42     #7dcfff
+      inactive_workspace   #1a1b26   #1a1b26     #565f89
+      urgent_workspace     #f7768e   #1a1b26     #f7768e
+      binding_mode         #e0af68   #1a1b26     #e0af68
     }
 }
 
 # ───────────────────────────── 11. WINDOWS COLOR SETTINGS  ─────────────────
-## class                 border  backgr. text    indicator child_border                                                                     
-client.focused          #d4be98 #d4be98 #d4be98 #d4be98 #d4be98
-client.unfocused        #2b3339 #2b3339 #2b3339 #2b3339 #2b3339
-
-client.focused_inactive #2b3339 #2b3339 #2b3339 #2b3339 #2b3339
-client.placeholder      #2b3339 #2b3339 #2b3339 #2b3339 #2b3339
+## class                border   backgr.   text     indicator child_border
+client.focused          #7aa2f7  #7aa2f7   #7aa2f7  #7aa2f7   #7aa2f7
+client.unfocused        #1a1b26  #1a1b26   #1a1b26  #24283b   #24283b
+client.focused_inactive #414868  #1a1b26   #a9b1d6  #414868   #414868
+client.placeholder      #1f2335  #1f2335   #c0caf5  #1f2335   #1f2335

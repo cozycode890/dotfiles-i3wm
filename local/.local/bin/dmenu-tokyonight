@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# TokyoNight (Night) for dmenu
+
+NB="#1a1b26" # normal background
+NF="#c0caf5" # normal foreground
+SB="#7aa2f7" # selected background (blue)
+SF="#1a1b26" # selected foreground (dark text for contrast)
+
+FONT="OperatorMonoBook:bold:pixelsize=18"
+
+dmenu_run -i -b -fn "$FONT" \
+  -nb "$NB" -nf "$NF" \
+  -sb "$SB" -sf "$SF" \
+  "$@"

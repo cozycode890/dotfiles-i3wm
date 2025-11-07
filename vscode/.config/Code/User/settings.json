@@ -1,4 +1,11 @@
 {
+  "keyboard.dispatch": "keyCode", // fix phím Esc/Alt trên Linux
+  "editor.smoothScrolling": true,
+  "editor.scrollBeyondLastLine": false,
+  "editor.mouseWheelScrollSensitivity": 0.6,
+  "editor.fastScrollSensitivity": 2,
+  "workbench.list.smoothScrolling": true,
+  "editor.cursorSmoothCaretAnimation": "on",
   "security.workspace.trust.untrustedFiles": "open",
   "security.workspace.trust.enabled": false,
   "editor.minimap.enabled": false,
@@ -25,76 +32,6 @@
   "explorer.confirmDelete": false,
   "editor.unicodeHighlight.ambiguousCharacters": false,
   "editor.fontSize": 18,
-  "vim.handleKeys": {
-    "<C-a>": false,
-    "<C-b>": false,
-    "<C-c>": false,
-    "<C-d>": false,
-    "<C-e>": false,
-    "<C-f>": false,
-    "<C-g>": false,
-    "<C-h>": false,
-    "<C-i>": false,
-    "<C-j>": false,
-    "<C-k>": false,
-    "<C-l>": false,
-    "<C-n>": false,
-    "<C-o>": false,
-    "<C-p>": false,
-    "<C-q>": false,
-    "<C-r>": false,
-    "<C-s>": false,
-    "<C-t>": false,
-    "<C-u>": false,
-    "<C-v>": false,
-    "<C-w>": false,
-    "<C-x>": false,
-    "<C-y>": false,
-    "<C-z>": false,
-    "<C-/>": false,
-    "<C-Tab>": false,
-    "<C-Shift-Tab>": false,
-    "<C-PageUp>": false,
-    "<C-PageDown>": false,
-    "<Tab>": false,
-    "<S-Tab": false
-  },
-  "vim.normalModeKeyBindingsNonRecursive": [
-    {
-      "before": [
-        "<tab>"
-      ],
-      "commands": [
-        "editor.action.indentLines"
-      ]
-    },
-    {
-      "before": [
-        "<S-Tab>"
-      ],
-      "commands": [
-        "editor.action.outdentLines"
-      ]
-    }
-  ],
-  "vim.visualModeKeyBindingsNonRecursive": [
-    {
-      "before": [
-        "<tab>"
-      ],
-      "commands": [
-        "editor.action.indentLines"
-      ]
-    },
-    {
-      "before": [
-        "<S-Tab>"
-      ],
-      "commands": [
-        "editor.action.outdentLines"
-      ]
-    }
-  ],
   "editor.fontFamily": "CaskaydiaCove Nerd Font, Consolas, 'Courier New', monospace",
   "editor.fontLigatures": true,
   "typescript.suggest.paths": false,
@@ -109,33 +46,105 @@
   "window.commandCenter": false,
   "workbench.secondarySideBar.showLabels": false,
   "editor.autoIndentOnPaste": true,
-  "everforest.italicKeywords": true,
   "settingsSync.ignoredExtensions": [
     "vscode.theme-kimbie-dark"
   ],
-  "workbench.colorTheme": "Everforest Dark",
-  "everforest.darkContrast": "hard",
-  "everforest.highContrast": true,
+  "workbench.colorTheme": "Tokyo Night",
   "terminal.integrated.fontLigatures.enabled": true,
   "jdk.telemetry.enabled": true,
   "editor.formatOnSave": true,
-  // Dùng radian làm R terminal (nếu có), nếu không hãy để "/usr/bin/R"
   "r.rterm.linux": "/usr/bin/radian",
   "r.bracketedPaste": true,
-  // Vẽ đồ thị trong VS Code qua httpgd
   "r.plot.useHttpgd": true,
-  // Tự attach packages (nếu bạn muốn)
   "r.alwaysUseActiveTerminal": true,
-  // Lint & format
-  "r.linting.enabled": true,
-  "r.linting.lintrExecutable": "/usr/bin/R", // VS Code gọi R để chạy lintr
-  "r.formatting.style": "styler",
-  "window.menuBarVisibility": "hidden",
+  "window.menuBarVisibility": "toggle",
   "window.density.editorTabHeight": "compact",
   "window.titleBarStyle": "native",
   "editor.lineNumbers": "relative",
   "quarto.visualEditor.lineNumbers": true,
   "vim.useSystemClipboard": true,
   "workbench.sideBar.location": "right",
-  "workbench.activityBar.location": "hidden"
+  "workbench.activityBar.location": "default",
+  "code-runner.runInTerminal": true,
+  "code-runner.preserveFocus": true,
+  // Tùy chọn an toàn: tắt toàn bộ Ctrl-bindings mặc định của Vim để tránh chiếm shortcut của VSCode/Jupyter
+  "vim.useCtrlKeys": false,
+  // Chỉ định rõ những phím buộc nhả cho VSCode/Jupyter (kể cả khi bạn bật lại useCtrlKeys sau này)
+  "vim.handleKeys": {
+    // ===== Jupyter Notebook essentials =====
+    "<C-Enter>": false, // Run Cell
+    "<S-Enter>": false, // Run + Select Below
+    "<A-Enter>": false, // Run + Insert Below
+    "<C-S-Enter>": false, // Run Above (tuỳ layout)
+    "<C-Space>": false, // Trigger Suggest/IntelliSense trong cell
+    "<C-/>": false, // Toggle line comment trong cell
+    "<C-S-/>": false, // Block comment (tuỳ keymap)
+    "<A-Down>": false, // Move line/selection down (hay dùng khi thao tác cell)
+    "<A-Up>": false, // Move line/selection up
+    // ===== VS Code core (Command Palette, File, Window, Editor…) =====
+    "<C-S-p>": false, // Command Palette
+    "<C-p>": false, // Quick Open
+    "<C-n>": false, // New file (hoặc next item trong quick pick)
+    "<C-o>": false, // Open file
+    "<C-s>": false, // Save
+    "<C-S-s>": false, // Save As
+    "<C-w>": false, // Close editor
+    "<C-Tab>": false, // Next editor
+    "<C-S-Tab>": false, // Prev editor
+    "<C-`>": false, // Toggle Integrated Terminal
+    "<C-b>": false, // Toggle Sidebar
+    "<C-\\>": false, // Split editor
+    "<C-k>": false, // (tiền tố nhiều chord của VSCode, nhả để VSCode xử lý)
+    "<C-/>": false, // Toggle line comment (lặp lại để chắc chắn nhả)
+    "<C-S-/>": false, // Toggle block comment
+    // ===== Editing / Navigation quen thuộc của VS Code =====
+    "<C-a>": false, // Select all / move to BOL (tuỳ chế độ)
+    "<C-e>": false, // Move to EOL / suggest (tuỳ ngữ cảnh)
+    "<C-f>": false, // Find
+    "<C-h>": false, // Replace
+    "<C-d>": false, // Add selection to next find match / half-page down trong Vim → nhường cho VSCode
+    "<C-u>": false, // (Vim: half-page up) – nhường cho VSCode để tránh xung đột
+    "<C-y>": false, // Redo/Scroll line up (tránh nuốt redo của VSCode tuỳ keymap)
+    "<C-z>": false, // Undo (khi bạn muốn undo của VSCode thống nhất mọi ngữ cảnh)
+    "<C-x>": false, // Cut
+    "<C-c>": false, // Copy
+    "<C-v>": false, // Paste
+    "<C-l>": false, // Expand line selection (VSCode) / (Vim hay dùng <C-l> để clear highlight)
+    "<C-j>": false, // Join lines/Next item (tuỳ keymap VSCode)
+    "<C-t>": false, // New tab / Reopen closed tab (tuỳ keymap)
+    "<C-r>": false, // Redo / History (tuỳ keymap)
+    "<C-q>": false, // Quit multi-cursor / Toggle recording (tuỳ)
+    "<C-g>": false, // Go to line (tuỳ keymap)
+    "<C-i>": false, // Show hover / Trigger suggest (tuỳ ngữ cảnh)
+    "<C-o>": false, // (đã có ở trên) – đảm bảo nhả
+    // ===== Indent/Outdent, Format, Selection =====
+    "<C-]>": false, // Indent line
+    "<C-[>": false, // Outdent line
+    "<C-S-k>": false, // Delete line
+    "<C-S-\\>": false, // Toggle split / Focus split (tuỳ keymap)
+    "<C-S-Alt-Down>": false, // Copy line down (nhiều layout dùng Alt+Shift+Down; thêm biến thể Ctrl để an toàn)
+    "<C-S-Alt-Up>": false, // Copy line up
+    // ===== Terminal/Panel/Explorer nhanh =====
+    "<C-j>": false, // (đã nhả ở trên) – nhiều người map mở panel/terminal
+    "<C-`>": false, // (đã nhả ở trên) – toggle terminal
+    "<A-Left>": false, // Go back (workbench)
+    "<A-Right>": false, // Go forward (workbench)
+    // ===== Tab/Editor switching & view =====
+    "<C-PageDown>": false, // Next tab
+    "<C-PageUp>": false, // Prev tab
+    "<C-1>": false, // Focus editor group 1 (nếu bạn hay dùng số để nhảy group)
+    "<C-2>": false,
+    "<C-3>": false,
+    "<C-4>": false,
+    "<C-5>": false,
+    "<C-6>": false,
+    "<C-7>": false,
+    "<C-8>": false,
+    "<C-9>": false,
+    "<C-0>": false,
+    // ===== Misc phổ biến khác để tránh nuốt trong insert/normal =====
+    "<C-Space>": false, // (lặp lại để chắc chắn) IntelliSense
+    "<C-;>": false, // Một số keymap dùng cho expand snippet
+    "<C-' >": false // Một số keymap dùng cho peek/quotes (tuỳ layout)
+  }
 }

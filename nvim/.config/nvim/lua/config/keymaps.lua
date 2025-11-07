@@ -2,43 +2,153 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
+-- Keymaps are automatically loaded on the VeryLazy event
+-- Default keymaps: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
+
 -- ============ INDENT WITH TAB / UNINDENT WITH S-TAB ============
--- Normal mode: indent current line
 vim.keymap.set("n", "<Tab>", ">>", { desc = "Indent line" })
 vim.keymap.set("n", "<S-Tab>", "<<", { desc = "Unindent line" })
-
--- Visual mode: indent selection and keep it selected
 vim.keymap.set("v", "<Tab>", ">gv", { desc = "Indent selection" })
 vim.keymap.set("v", "<S-Tab>", "<gv", { desc = "Unindent selection" })
 
--- (Tùy chọn) Nếu thật sự muốn trong Insert mode (có thể ảnh hưởng nvim-cmp)
--- Tăng/giảm thụt lề tại Insert (chuẩn Vim)
--- vim.keymap.set("i", "<Tab>", "<C-t>", { desc = "Indent (insert)" })
--- vim.keymap.set("i", "<S-Tab>", "<C-d>", { desc = "Unindent (insert)" })
+-- (Optional) Insert-mode indent (có thể ảnh hưởng nvim-cmp)
+vim.keymap.set("i", "<Tab>", "<C-t>", { desc = "Indent (insert)" })
+vim.keymap.set("i", "<S-Tab>", "<C-d>", { desc = "Unindent (insert)" })
 
--- Xoá các map mặc định mà LazyVim đặt cho tìm files/grep
--- vim.schedule(function()
---   pcall(vim.keymap.del, "n", "<leader>ff")
---   pcall(vim.keymap.del, "n", "<leader>fF")
---   pcall(vim.keymap.del, "n", "<leader>fg")
--- end)
+-- ============ SMART i / a  ============
+local function in_leading_spaces()
+  local col = vim.fn.col(".")
+  local first = vim.fn.indent(vim.fn.line(".")) + 1
+  if col < first then
+    local ch = vim.fn.getline("."):sub(col, col)
+    return ch == " " or ch == "\t"
+  end
+  return false
+end
 
--- Explorer tại thư mục của file đang mở
-vim.keymap.set("n", "<leader>e", function()
-  local Snacks = require("snacks")
-  local bufpath = vim.api.nvim_buf_get_name(0)
-  local dir = (bufpath ~= "" and vim.fn.fnamemodify(bufpath, ":p:h")) or vim.uv.cwd()
-  Snacks.explorer({ cwd = dir })
-end, { desc = "Explorer (buffer's directory)" })
+vim.keymap.set("n", "i", function()
+  return in_leading_spaces() and "I" or "i"
+end, { expr = true, desc = "Smart i → go to indent if in leading spaces" })
 
--- Explorer theo root (LSP → .git → cwd)
-vim.keymap.set("n", "<leader>E", function()
-  require("snacks").explorer() -- để Snacks tự chọn root theo vim.g.root_spec
-end, { desc = "Explorer (project root by spec)" })
+vim.keymap.set("n", "a", function()
+  return in_leading_spaces() and "^i" or "a"
+end, { expr = true, desc = "Smart a → go to indent if in leading spaces" })
 
-vim.keymap.set("n", "<leader>fg", function()
-  require("snacks").picker.grep({
-    cmd = "rg",
-    args = { "--hidden", "--glob", "!**/.git/**" },
-  })
-end, { desc = "Find Text" })
+-- ============ TERMINAL (mở tại thư mục file hiện tại) ============
+-- Terminal ở thư mục của file hiện tại local
+Util = require("lazyvim.util")
+
+vim.keymap.set("n", "<leader>ft", function()
+  Util.terminal(nil, { cwd = vim.fn.expand("%:p:h") })
+end, { desc = "Terminal (file dir)" })
+
+-- Thoát terminal-mode & di chuyển cửa sổ
+-- ==== Make <Esc> reliably leave terminal-mode (incl. LazyVim float / Snacks) ====
+-- Tối ưu độ trễ Esc (tránh nvim chờ Alt-prefix)
+vim.opt.ttimeout = true
+vim.opt.ttimeoutlen = 50 -- 20–80 là hợp lý; 50 khá an toàn
+
+local function tmap(lhs, rhs, opts)
+  vim.keymap.set("t", lhs, rhs, vim.tbl_extend("force", { silent = true, noremap = true }, opts or {}))
+end
+
+local grp = vim.api.nvim_create_augroup("BetterTermEsc", { clear = true })
+
+vim.api.nvim_create_autocmd({ "TermOpen", "TermEnter" }, {
+  group = grp,
+  callback = function(ev)
+    -- buffer-local để “ăn” ngay trong terminal hiện tại
+    tmap("<Esc>", [[<C-\><C-n>]], { buffer = ev.buf, nowait = true })
+
+    -- điều hướng cửa sổ khi đang ở terminal
+    tmap("<C-h>", [[<C-\><C-n><C-w>h]], { buffer = ev.buf })
+    tmap("<C-j>", [[<C-\><C-n><C-w>j]], { buffer = ev.buf })
+    tmap("<C-k>", [[<C-\><C-n><C-w>k]], { buffer = ev.buf })
+    tmap("<C-l>", [[<C-\><C-n><C-w>l]], { buffer = ev.buf })
+  end,
+})
+
+-- ============ BUFFERLINE: GOTO BY ORDINAL (robust) ============
+local function bl_goto_ordinal(n)
+  local ok, bl = pcall(require, "bufferline")
+  if ok and type(bl.get_elements) == "function" then
+    local els = bl.get_elements().elements or {}
+    local el = els[n]
+    if el and el.id then
+      vim.api.nvim_set_current_buf(el.id)
+      return true
+    end
+    return false
+  end
+  -- Fallback: listed buffers in display order if available (LazyVim), else bufnr sort
+  local listed = vim.t.bufs or {}
+  if #listed > 0 then
+    local b = listed[n]
+    if b and vim.api.nvim_buf_is_loaded(b) then
+      vim.api.nvim_set_current_buf(b)
+      return true
+    end
+  end
+  local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+  table.sort(bufs, function(a, b)
+    return a.bufnr < b.bufnr
+  end)
+  local target = bufs[n]
+  if target then
+    vim.api.nvim_set_current_buf(target.bufnr)
+    return true
+  end
+  return false
+end
+
+local function bl_goto_last()
+  local ok, bl = pcall(require, "bufferline")
+  if ok and type(bl.get_elements) == "function" then
+    local els = bl.get_elements().elements or {}
+    local last = els[#els]
+    if last and last.id then
+      vim.api.nvim_set_current_buf(last.id)
+      return
+    end
+  end
+  local listed = vim.t.bufs or {}
+  if #listed > 0 then
+    vim.api.nvim_set_current_buf(listed[#listed])
+    return
+  end
+  local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+  if #bufs > 0 then
+    vim.api.nvim_set_current_buf(bufs[#bufs].bufnr)
+  end
+end
+
+-- Prompt: enter an ordinal and jump
+vim.keymap.set("n", "<A-g>", function()
+  vim.ui.input({ prompt = "Go to buffer (ordinal): " }, function(input)
+    local n = tonumber(input or "")
+    if not n or not bl_goto_ordinal(n) then
+      vim.notify("Invalid ordinal", vim.log.levels.ERROR)
+    end
+  end)
+end, { desc = "Go to buffer by ordinal" })
+
+-- Keymaps:
+-- 1) Alt+1..9 (works only if your WM/terminal doesn’t swallow Alt)
+for i = 1, 9 do
+  vim.keymap.set("n", ("<M-%d>"):format(i), function()
+    if not bl_goto_ordinal(i) then
+      vim.notify("No buffer at ordinal " .. i, vim.log.levels.WARN)
+    end
+  end, { desc = ("Go to buffer #%d (ordinal)"):format(i) })
+end
+vim.keymap.set("n", "<M-0>", bl_goto_last, { desc = "Go to last buffer (ordinal)" })
+
+-- 2) Guaranteed in-terminal fallback keys (use these if Alt is intercepted):
+for i = 1, 9 do
+  vim.keymap.set("n", ("g%d"):format(i), function()
+    if not bl_goto_ordinal(i) then
+      vim.notify("No buffer at ordinal " .. i, vim.log.levels.WARN)
+    end
+  end, { desc = ("Go to buffer #%d (ordinal)"):format(i) })
+end
+vim.keymap.set("n", "g0", bl_goto_last, { desc = "Go to last buffer (ordinal)" })

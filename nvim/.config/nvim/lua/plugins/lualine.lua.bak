@@ -1,0 +1,60 @@
+-- lua/plugins/env_and_lualine.lua
+return {
+  -- BOOTSTRAP ENV super-early using a real plugin as the anchor
+  {
+    "LazyVim/LazyVim",
+    lazy = false,
+    priority = 10000, -- run before others build their specs
+    init = function()
+      local ENV = {}
+      ENV.is_neovide = vim.g.neovide == true or vim.g.neovide == 1 or vim.g.neovide == "true"
+      ENV.is_kitty = (vim.env.TERM == "xterm-kitty") or (vim.env.KITTY_WINDOW_ID ~= nil)
+      ENV.use_tab_title = ENV.is_kitty or ENV.is_neovide
+
+      -- expose for `require("config.env")`
+      -- Vẫn giữ lại nếu bạn cần nó ở nơi khác
+      package.loaded["config.env"] = ENV
+
+      -- set early (avoid flicker), then re-assert on UIEnter
+      vim.opt.laststatus = 3
+
+      if ENV.is_kitty then
+        pcall(function()
+          require("config.kitty_title").setup()
+        end)
+      end
+
+      local grp = vim.api.nvim_create_augroup("ui_status_env", { clear = true })
+      vim.api.nvim_create_autocmd("UIEnter", {
+        group = grp,
+        callback = function()
+          -- Chúng ta có thể đọc lại từ 'config.env' ở đây vì nó chắc chắn đã được tải
+          local ok, env = pcall(require, "config.env")
+          if ok then
+            vim.opt.laststatus = env.use_tab_title and 0 or 3
+            if env.is_kitty then
+              pcall(function()
+                require("config.kitty_title").setup()
+              end)
+            end
+          end
+        end,
+      })
+    end,
+  },
+
+  -- Only load lualine when we are NOT using tab titles
+  {
+    "nvim-lualine/lualine.nvim",
+    enabled = function()
+      -- SỬA LỖI: Chạy lại logic phát hiện ở đây.
+      -- Hàm 'enabled' chạy quá sớm để có thể 'require' một cách đáng tin cậy.
+      local is_neovide = vim.g.neovide == true or vim.g.neovide == 1 or vim.g.neovide == "true"
+      local is_kitty = (vim.env.TERM == "xterm-kitty") or (vim.env.KITTY_WINDOW_ID ~= nil)
+      local use_tab_title = is_kitty or is_neovide
+
+      -- Chỉ bật lualine nếu chúng ta KHÔNG dùng tab title
+      return not use_tab_title
+    end,
+  },
+}

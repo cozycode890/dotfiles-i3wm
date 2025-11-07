@@ -136,4 +136,6 @@ export PATH="$JAVA_HOME/bin:$PATH"
 ZSH_HIGHLIGHT_STYLES[comment]='fg=8,dim'
 
 eval "$(zoxide init zsh)"
-# eval "$(starship init zsh)"
+eval "$(starship init zsh)"
+
+# source ~/.config/fzf/theme.zsh

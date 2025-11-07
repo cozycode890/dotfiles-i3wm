@@ -1,0 +1,36 @@
+# ~/.config/yazi/yazi.toml
+[tasks]
+# Pick sane-but-large values; avoid 0 unless you really trust your files.
+image_bound = [12000, 12000] # or 0 for unlimited (risky)
+image_alloc = 268435456      # 256 MiB; try 536870912 (512 MiB) if needed
+
+# ~/.config/yazi/yazi.toml
+[opener]
+edit = [
+  { run = '/usr/bin/nvim "$@"', block = true, for = "unix" },
+  { run = '/usr/bin/vim "$@"', block = true, for = "unix" },
+]
+
+[plugin]
+prepend_previewers = [
+  { name = "*.csv", run = "duckdb" },
+  { name = "*.tsv", run = "duckdb" },
+  { name = "*.json", run = "duckdb" },
+  { name = "*.parquet", run = "duckdb" },
+  { name = "*.txt", run = "duckdb" },
+  { name = "*.xlsx", run = "duckdb" },
+  { name = "*.db", run = "duckdb" },
+  { name = "*.duckdb", run = "duckdb" },
+]
+
+prepend_preloaders = [
+  { name = "*.csv", run = "duckdb", multi = false },
+  { name = "*.tsv", run = "duckdb", multi = false },
+  { name = "*.json", run = "duckdb", multi = false },
+  { name = "*.parquet", run = "duckdb", multi = false },
+  { name = "*.txt", run = "duckdb", multi = false },
+  { name = "*.xlsx", run = "duckdb", multi = false },
+]
+
+[mgr]
+ratio = [1, 2, 5]

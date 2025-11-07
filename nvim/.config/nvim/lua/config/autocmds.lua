@@ -7,47 +7,45 @@
 -- Or remove existing autocmds by their group name (which is prefixed with `lazyvim_` for the defaults)
 -- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 
--- ========== AUTO-SAVE ==========
+-- extra autocmds
+local aug = vim.api.nvim_create_augroup
+local ac = vim.api.nvim_create_autocmd
+
+vim.opt.autoread = true
+
+local G = {
+  autosave = aug("autosave_conservative", { clear = true }),
+  autoread = aug("autoread_checktime", { clear = true }),
+  filenotify = aug("autoread_notify", { clear = true }),
+}
+
 local function should_write(buf)
-  if vim.bo[buf].buftype ~= "" then
-    return false
-  end -- bỏ help/quickfix/terminal...
-  if not vim.bo[buf].modifiable then
-    return false
-  end
-  if vim.api.nvim_buf_get_name(buf) == "" then
-    return false
-  end
-  return vim.bo[buf].modified
+  local bo = vim.bo[buf]
+  return bo.buftype == "" -- không phải help/quickfix/terminal...
+    and bo.modifiable
+    and bo.modified
+    and vim.api.nvim_buf_get_name(buf) ~= ""
 end
 
--- Hồ sơ "bảo thủ": lưu khi rời insert, rời buffer, mất focus
-vim.api.nvim_create_autocmd({ "InsertLeave", "BufLeave", "FocusLost" }, {
+-- AUTO-SAVE: rời insert, rời buffer, mất focus
+ac({ "InsertLeave", "BufLeave", "FocusLost" }, {
+  group = G.autosave,
   callback = function(args)
     if should_write(args.buf) then
-      pcall(vim.cmd, "silent! update")
+      vim.cmd("silent! update")
     end
   end,
 })
 
--- Hồ sơ "tích cực": lưu sau khi đứng yên 1 nhịp (dựa trên updatetime)
--- Bỏ comment nếu bạn muốn tự lưu thường xuyên hơn
--- vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
---   callback = function(args)
---     if should_write(args.buf) then
---       pcall(vim.cmd, "silent! update")
---     end
---   end,
--- })
-
--- ========== AUTO-RELOAD KHI FILE BÊN NGOÀI ĐỔI ==========
--- Gọi :checktime vào các thời điểm hợp lý để phát hiện thay đổi
-vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave", "BufEnter", "CursorHold" }, {
+-- AUTO-RELOAD: phát hiện thay đổi ngoài
+ac({ "FocusGained", "TermClose", "TermLeave", "BufEnter", "CursorHold" }, {
+  group = G.autoread,
   command = "checktime",
 })
 
--- Thông báo khi đã reload do thay đổi ngoài
-vim.api.nvim_create_autocmd("FileChangedShellPost", {
+-- Thông báo khi file đã reload do thay đổi ngoài
+ac("FileChangedShellPost", {
+  group = G.filenotify,
   callback = function(info)
     local msg = ("File đã thay đổi trên đĩa và được nạp lại: %s"):format(info.file or "")
     local ok, notify = pcall(require, "notify")

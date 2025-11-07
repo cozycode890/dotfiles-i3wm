@@ -1,7 +1,40 @@
--- ~/.config/nvim/lua/plugins/snacks-dashboard-order.lua
 return {
   {
     "folke/snacks.nvim",
+    keys = {
+      {
+        "<leader>E",
+        function()
+          require("snacks").explorer() -- để Snacks tự chọn root theo vim.g.root_spec
+        end,
+        desc = "Explorer (project root by spec)",
+        mode = "n",
+      },
+
+      {
+        "<leader>e",
+        function()
+          local Snacks = require("snacks")
+          local bufpath = vim.api.nvim_buf_get_name(0)
+          local dir = (bufpath ~= "" and vim.fn.fnamemodify(bufpath, ":p:h")) or vim.uv.cwd()
+          Snacks.explorer({ cwd = dir })
+        end,
+        desc = "Explorer (buffer's directory)",
+        mode = "n",
+      },
+
+      {
+        "<leader>fg",
+        function()
+          require("snacks").picker.grep({
+            cmd = "rg",
+            args = { "--hidden", "--glob", "!**/.git/**" },
+          })
+        end,
+        desc = "Find Text",
+        mode = "n",
+      },
+    },
     optional = true,
     opts = function(_, opts)
       opts = opts or {}
@@ -112,6 +145,16 @@ return {
           action = function()
             vim.cmd("qall")
           end,
+        },
+      }
+
+      opts.terminal = {
+        start_insert = true,
+        win = {
+          position = "float", -- nổi
+          border = "rounded",
+          width = 0.9, -- 90% chiều ngang màn hình
+          height = 0.9, -- 90% chiều dọc màn hình
         },
       }
 

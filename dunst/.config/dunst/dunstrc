@@ -1,85 +1,77 @@
 [global]
-    monitor = 0
-    follow = mouse
-    geometry = bottom
-    indicate_hidden = yes
-    shrink = no
-    transparency = 0
-    notification_height = 0
-    separator_height = 1
-    padding = 8
-    horizontal_padding = 8
-    frame_width = 0
-    frame_color = "#2B3339"
-    separator_color = frame
-    sort = yes
-    idle_threshold = 120
-    corner_radius = 3
-
-    font = FiraCode Nerd Font 12
-    line_height = 0
-    markup = full
+    # Look & feel
+    font = OperatorMono Nerd Font 10
+    allow_markup = yes
     format = "<b>%s</b>\n%b"
-    alignment = left
     vertical_alignment = center
-    show_age_threshold = 60
-    word_wrap = yes
-    ellipsize = middle
-
+    ellipsize = end
     ignore_newline = no
-    stack_duplicates = true
-    hide_duplicate_count = false
 
-    show_indicators = no
+    # Geometry
+    width = 360
+    height = 300
+    origin = top-right
+    offset = 16x16
+    padding = 10
+    horizontal_padding = 12
+    text_icon_padding = 8
+    corner_radius = 10
+    separator_height = 2
+    gap_size = 8
+
+    # Colors (Tokyo Night - Night)
+    background = "#1a1b26"
+    foreground = "#c0caf5"
+    frame_color = "#7aa2f7"
+    separator_color = frame
+
+    # Transparency (0–100, higher = more transparent)
+    transparency = 0
+
+    # Icons
+    icon_theme = Papirus
     icon_position = left
-    max_icon_size = 75
-    icon_path = ~/.dotfiles/icons/.icons/Everforest-Dark/panel/16/:~/.dotfiles/icons/.icons/Everforest-Dark/status/symbolic/:~/.dotfiles/icons/.icons/Everforest-Dark/devices/16
+    min_icon_size = 24
+    max_icon_size = 64
+
+    # Behavior
     sticky_history = yes
     history_length = 20
-    dmenu = /usr/bin/dmenu -p dunst:
-    browser = /usr/bin/firefox -new-tab
-    always_run_script = true
-
-    title = Dunst
-
-    class = Dunst
-    startup_notification = false
-    verbosity = mesg
-    corner_radius = 10
-    ignore_dbusclose = false
-    force_xinerama = false
+    show_indicators = yes
+    indicate_hidden = yes
+    sort = yes
+    word_wrap = yes
     mouse_left_click = close_current
-    mouse_middle_click = do_action, close_current
+    mouse_middle_click = do_action
     mouse_right_click = close_all
 
-[experimental]
-    per_monitor_dpi = false
+    # Progress bar (uses frame/foreground by default)
+    progress_bar = true
+    progress_bar_height = 6
+    progress_bar_min_width = 120
+    progress_bar_max_width = 320
+    progress_bar_frame_width = 1
+    progress_bar_corner_radius = 6
 
-[shortcuts]
-    close = ctrl+space
-    close_all = ctrl+shift+space
-    history = ctrl+grave
-    context = ctrl+shift+period
+[urgency_low]
+    timeout = 6
+    background = "#16161e"
+    foreground = "#c0caf5"
+    frame_color = "#565f89"
 
-frame_color = "#2B3339"
-separator_color = "#263640"
+[urgency_normal]
+    timeout = 8
+    background = "#1a1b26"
+    foreground = "#c0caf5"
+    frame_color = "#7aa2f7"  # blue
+    # highlight links / actions
+    highlight = "#7dcfff"
 
-[rule]
-    appname = "xborders"
-    skip_display = true
-    history_ignore = true
+[urgency_critical]
+    timeout = 0
+    background = "#1a1b26"
+    foreground = "#c0caf5"
+    frame_color = "#f7768e"  # red
+    # make title stand out
+    markup = full
 
-[base16_low]
-    msg_urgency = low
-    background = "#2B3339"
-    foreground = "#D9D7D6"
-
-[base16_normal]
-    msg_urgency = normal
-    background = "#2B3339"
-    foreground = "#D9D7D6"
-
-[base16_critical]
-    msg_urgency = critical
-    background = "#061115"
-    foreground = "#D9D7D6"
