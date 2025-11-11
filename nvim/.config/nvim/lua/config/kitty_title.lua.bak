@@ -55,9 +55,6 @@ function M.setup()
     return
   end
 
-  -- Ẩn statusline toàn cục khi đã dùng tab title (tuỳ bạn giữ hoặc bỏ)
-  vim.opt.laststatus = 0
-
   local grp = vim.api.nvim_create_augroup("TabTitleSync", { clear = true })
   vim.api.nvim_create_autocmd({
     "VimEnter",

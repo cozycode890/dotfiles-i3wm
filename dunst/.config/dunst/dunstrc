@@ -7,6 +7,9 @@
     ellipsize = end
     ignore_newline = no
 
+  # Icons path
+    icon_path = ~/.dotfiles/icons/.icons/Everforest-Dark/panel/16/:~/.dotfiles/icons/.icons/Everforest-Dark/status/symbolic/:~/.dotfiles/icons/.icons/Everforest-Dark/devices/16
+
     # Geometry
     width = 360
     height = 300

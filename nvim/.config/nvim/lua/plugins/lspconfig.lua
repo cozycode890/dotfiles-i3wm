@@ -164,6 +164,12 @@ return {
             focus_id = "hover-quiet",
             max_width = opts.max_width or 84,
             max_height = opts.max_height or 24,
+
+            -- THÊM CÁC TÙY CHỌN NÀY ĐỂ ĐỊNH VỊ:
+            relative = "cursor", -- Định vị tương đối so với con trỏ
+            anchor = "NW", -- Mỏ neo của popup là góc TRÊN-TRÁI (North-West)
+            row = 1, -- Dịch popup xuống 1 hàng (so với con trỏ)
+            col = 0, -- Dịch popup sang 0 cột (giữ nguyên cột)
           })
           H.last_win, H.last_buf = win, buf
         end)
@@ -184,7 +190,7 @@ return {
           then
             return
           end
-          hover_quiet({ border = BORDER, max_width = 65, max_height = 12, truncate = H.truncate, max_lines = 12 })
+          hover_quiet({ border = BORDER, max_width = 65, max_height = 9, truncate = H.truncate, max_lines = 9 })
         end,
       })
 
@@ -283,55 +289,43 @@ return {
 
   -- 2) Completion: cửa sổ có viền, định dạng gọn, hiệu năng
   {
-    "hrsh7th/nvim-cmp",
+    "saghen/blink.cmp",
     opts = function(_, opts)
-      local cmp = require("cmp")
+      -- === 1. Tăng hiệu suất ===
+      -- Tăng thời gian chờ (debounce) lên 150ms
+      -- Giúp giảm tải CPU, Neovim sẽ chờ 150ms sau khi bạn gõ phím
+      -- rồi mới yêu cầu gợi ý, thay vì yêu cầu liên tục.
+      opts.debounce = 150
 
-      -- Menu gọn, không scrollbar, tách màu rõ
-      opts.window = {
-        completion = {
-          scrollbar = false,
-          winhighlight = table.concat({
-            "Normal:Pmenu", -- nền menu
-            "FloatBorder:CmpBorder", -- để sau dùng chung màu border
-            "CursorLine:PmenuSel", -- dòng chọn
-            "Search:None",
-          }, ","),
-        },
-        documentation = { border = "rounded", winhighlight = "Normal:NormalFloat,FloatBorder:CmpBorder" },
-      }
+      -- Đảm bảo các bảng lồng nhau tồn tại
+      opts.completion = opts.completion or {}
+      opts.completion.menu = opts.completion.menu or {}
+      opts.completion.documentation = opts.completion.documentation or {}
+      opts.completion.documentation.window = opts.completion.documentation.window or {}
 
-      -- Làm màu dễ thấy (TokyoNight)
-      pcall(vim.api.nvim_set_hl, 0, "FloatBorder", { fg = "#7aa2f7", bg = "NONE" })
-      pcall(vim.api.nvim_set_hl, 0, "CmpBorder", { link = "FloatBorder" })
-      pcall(vim.api.nvim_set_hl, 0, "Pmenu", { link = "NormalFloat" })
-      pcall(vim.api.nvim_set_hl, 0, "PmenuSel", { link = "Visual" })
+      -- === 2. Tắt Scrollbar ===
+      -- Tắt thanh cuộn trong menu gợi ý
+      opts.completion.menu.scrollbar = false
 
-      -- Gọn nội dung + hiệu năng
-      opts.experimental = vim.tbl_deep_extend("force", opts.experimental or {}, {
-        ghost_text = { hl_group = "Comment" },
-      })
-      opts.formatting = {
-        fields = { "kind", "abbr" },
-        format = function(_, item)
-          local icons = (require("lazyvim.config").icons or {}).kinds or {}
-          item.kind = (icons[item.kind] or "") .. " " .. item.kind
-          local abbr = item.abbr:gsub("%s*%([^)]*%)", "")
-          if #abbr > 46 then
-            abbr = abbr:sub(1, 43) .. "…"
-          end
-          item.abbr, item.menu = abbr, ""
-          return item
-        end,
-      }
-      opts.performance = vim.tbl_deep_extend("force", opts.performance or {}, {
-        debounce = 20,
-        throttle = 30,
-        fetching_timeout = 120,
-      })
+      -- === 3. Làm gọn gàng (Minimalist) ===
+      -- Giữ viền bo tròn từ config trước
+      opts.completion.menu.border = "rounded"
 
-      -- Nếu đang dùng hiệu ứng mờ làm viền “biến mất”, tắt thử:
-      vim.o.pumblend = 0
+      -- Bỏ phần đệm (padding) bên trong menu để nó "chật" và gọn hơn
+      opts.completion.menu.padding = 0
+
+      -- Định dạng lại menu: Chỉ hiển thị {kind} và {label}
+      -- Bỏ tên nguồn (source) và chi tiết (detail) cho gọn gàng nhất
+      opts.completion.menu.format = "{kind} {label}"
+
+      -- === Tăng hiệu suất (Nâng cao) ===
+      -- Tắt tự động hiển thị tài liệu (documentation).
+      -- Đây là một trong những cách TĂNG HIỆU SUẤT hiệu quả nhất.
+      -- Bạn sẽ cần tự gọi cửa sổ tài liệu (thường bằng phím tắt).
+      opts.completion.documentation.auto_show = false
+
+      -- Đồng bộ viền cho cửa sổ tài liệu khi bạn gọi nó
+      opts.completion.documentation.window.border = "rounded"
 
       return opts
     end,

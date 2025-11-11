@@ -57,6 +57,27 @@ local grp = vim.api.nvim_create_augroup("BetterTermEsc", { clear = true })
 vim.api.nvim_create_autocmd({ "TermOpen", "TermEnter" }, {
   group = grp,
   callback = function(ev)
+    -- Lấy filetype của buffer terminal hiện tại
+    local ft = vim.bo[ev.buf].filetype
+
+    -- ===== THAY THẾ 'yazi' bên dưới =====
+    -- Thay 'yazi' bằng filetype bạn tìm thấy ở Bước 1
+    -- Ví dụ: nếu filetype là 'toggleterm', thì viết: if ft == 'toggleterm' then
+    if ft == "yazi" then
+      -- Nếu đây là terminal của Yazi, chúng ta KHÔNG map <Esc>.
+      -- Bạn có thể quyết định có map các phím điều hướng C-h/j/k/l hay không.
+      -- Nếu Yazi không dùng C-h/j/k/l, bạn có thể giữ chúng.
+      -- Nếu muốn Yazi toàn quyền, chỉ cần 'return' ở đây.
+
+      -- Ví dụ: Vẫn map điều hướng nhưng bỏ qua Esc
+      tmap("<C-h>", [[<C-\><C-n><C-w>h]], { buffer = ev.buf })
+      tmap("<C-j>", [[<C-\><C-n><C-w>j]], { buffer = ev.buf })
+      tmap("<C-k>", [[<C-\><C-n><C-w>k]], { buffer = ev.buf })
+      tmap("<C-l>", [[<C-\><C-n><C-w>l]], { buffer = ev.buf })
+      return -- Rất quan trọng: dừng lại để không map <Esc> bên dưới
+    end
+
+    -- Nếu KHÔNG phải Yazi (là terminal thông thường):
     -- buffer-local để “ăn” ngay trong terminal hiện tại
     tmap("<Esc>", [[<C-\><C-n>]], { buffer = ev.buf, nowait = true })
 

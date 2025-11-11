@@ -5,6 +5,9 @@
 -- options.lua (compact)
 local o, a = vim.opt, vim.api
 
+-- ── Status bar ──────────────────────────────────────────────────────────
+o.laststatus = 3
+
 -- ── Files / Undo / History / Autocomment ────────────────────────────────
 o.swapfile = false
 o.undofile = true
@@ -60,4 +63,4 @@ for _, mode in ipairs({ "n", "x" }) do
   vim.keymap.set(mode, "k", 'v:count==0 and "gk" or "k"', expr_opts)
 end
 
-require("config/kitty_title").setup()
+-- require("config/kitty_title").setup()

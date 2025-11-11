@@ -17,40 +17,21 @@ return {
       local api, fn = vim.api, vim.fn
 
       -- ===== Helpers =====
-      local function strip_special(s)
-        return (s or "")
-          :gsub("\r", "")
-          :gsub("\239\187\191", "") -- BOM
-          :gsub("\226\128\139", "") -- ZWSP
-          :gsub("\194\160", " ") -- NBSP -> space
-      end
 
-      local function keep_line(l)
-        local s = strip_special(l)
-        return not s:match("^%s*$") and not s:match("^%s*#")
-      end
-
-      local function filter_lines(lines)
-        local out = {}
-        for _, l in ipairs(lines) do
-          if keep_line(l) then
-            out[#out + 1] = l
-          end
-        end
-        return out
-      end
-
+      -- Hàm này giờ rất đơn giản: chỉ lấy text, split, và gửi table
       local function send_to_repl(text)
         if not text or text == "" then
           return
         end
         local iron = require("iron.core")
-        local lines = filter_lines(vim.split(text, "\n", { plain = true }))
+        local lines = vim.split(text, "\n", { plain = true })
         if #lines > 0 then
-          iron.send(nil, table.concat(lines, "\n") .. "\n")
+          -- Gửi thẳng table, logic "clean" sẽ nằm ở hàm `config.format`
+          iron.send(nil, lines)
         end
       end
 
+      -- Hàm get_visual_text giữ nguyên
       local function get_visual_text()
         local bufnr = 0
         local mode = fn.visualmode()
@@ -91,6 +72,7 @@ return {
         end
       end
 
+      -- Hàm send_paragraph giữ nguyên
       local function send_paragraph()
         local bufnr = 0
         local row = api.nvim_win_get_cursor(0)[1]
@@ -126,7 +108,7 @@ return {
       M[#M + 1] = { "<leader>if", "<cmd>IronFocus<cr>", desc = "Focus REPL", mode = "n" }
       M[#M + 1] = { "<leader>ih", "<cmd>IronHide<cr>", desc = "Hide REPL", mode = "n" }
 
-      -- send (đã “clean”)
+      -- send (logic "clean" đã chuyển sang config)
       M[#M + 1] = {
         "<leader>il",
         function()
@@ -170,14 +152,57 @@ return {
     config = function()
       local iron = require("iron.core")
       local view = require("iron.view")
-      local common = require("iron.fts.common")
+
+      -- ===== Chuyển Helpers vào đây =====
+      local function strip_special(s)
+        return (s or "")
+          :gsub("\r", "")
+          :gsub("\239\187\191", "") -- BOM
+          :gsub("\226\128\139", "") -- ZWSP
+          :gsub("\194\160", " ") -- NBSP -> space
+      end
+
+      local function keep_line(l)
+        local s = strip_special(l)
+        -- Đây là logic "xóa comment" và "xóa dòng trống"
+        return not s:match("^%s*$") and not s:match("^%s*#")
+      end
+
+      local function filter_lines(lines)
+        local out = {}
+        for _, l in ipairs(lines) do
+          if keep_line(l) then
+            out[#out + 1] = l
+          end
+        end
+        return out
+      end
+
+      -- Hàm format MỚI: kết hợp cả "clean" và "format"
+      local function clean_and_format_bracketed(lines)
+        -- 1. LÀM SẠCH: Lọc comment và dòng trống
+        local cleaned_lines = filter_lines(lines)
+
+        -- Nếu không còn gì thì không gửi gì cả
+        if #cleaned_lines == 0 then
+          return ""
+        end
+
+        -- 2. GHÉP: Ghép các dòng sạch lại
+        local payload = table.concat(cleaned_lines, "\n")
+
+        -- 3. FORMAT:
+        -- Giữ `\n` ở cuối để "thực thi" code.
+        return "\x1b[200~" .. payload .. "\x1b[201~\n"
+      end
 
       iron.setup({
         config = {
           repl_definition = {
-            python = { command = { "ipython", "--no-autoindent" }, format = common.bracketed_paste },
-            r = { command = { "R", "--quiet", "--no-save" }, format = common.bracketed_paste },
-            sh = { command = { "bash" } },
+            -- Dùng hàm format mới cho tất cả
+            python = { command = { "ipython", "--no-autoindent" }, format = clean_and_format_bracketed },
+            r = { command = { "radian", "--quiet", "--no-save" }, format = clean_and_format_bracketed },
+            sh = { command = { "bash" }, format = clean_and_format_bracketed },
           },
           repl_open_cmd = view.split.belowright(8),
           scratch_repl = true,
@@ -185,7 +210,7 @@ return {
           close_window_on_exit = true,
           highlight_last = "IronLastSent",
           highlight = { italic = true },
-          ignore_blank_lines = true, -- vẫn tự lọc để chắc chắn
+          ignore_blank_lines = true,
         },
       })
     end,

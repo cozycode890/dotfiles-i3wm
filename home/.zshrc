@@ -106,6 +106,7 @@ source $ZSH/oh-my-zsh.sh
 alias ls="eza -a --color=always --long --no-filesize --icons=always --no-time --no-user --no-permissions --no-symlinks"
 alias ll="eza -a --color=always --long --no-filesize --icons=always --no-time --no-user --no-permissions --no-symlinks"
 alias la="eza -la --color=always --icons=always"
+alias tree="eza --tree --color=always --icons=always"
 alias zshrc="nvim ~/.zshrc"
 alias cd="z"
 alias tb="adb shell pm disable-user --user 0"

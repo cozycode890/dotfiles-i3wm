@@ -1,0 +1,27 @@
+return {
+  "nvim-telescope/telescope.nvim",
+  opts = function(_, opts)
+    opts = opts or {}
+    -- Kích thước và bố cục có panel preview
+    opts.defaults = vim.tbl_deep_extend("force", opts.defaults or {}, {
+      layout_strategy = "horizontal",
+      layout_config = {
+        width = 0.95,
+        height = 0.90,
+        preview_width = 0.55, -- tăng/giảm để thấy panel preview
+      },
+      color_devicons = true,
+    })
+
+    -- Đảm bảo các picker chính có preview
+    opts.pickers = vim.tbl_deep_extend("force", opts.pickers or {}, {
+      find_files = { previewer = true, hidden = true, follow = true },
+      live_grep = { previewer = true },
+      grep_string = { previewer = true },
+      buffers = { previewer = true, sort_lastused = true },
+      oldfiles = { previewer = true },
+    })
+
+    return opts
+  end,
+}

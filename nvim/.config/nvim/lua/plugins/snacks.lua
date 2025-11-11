@@ -39,13 +39,12 @@ return {
     opts = function(_, opts)
       opts = opts or {}
       opts.dashboard = opts.dashboard or {}
-      opts.dashboard.preset = opts.dashboard.preset or {}
 
       local function S()
         return require("snacks")
       end
 
-      opts.dashboard.preset.keys = {
+      opts.dashboard.preset.keys = vim.tbl_deep_extend("force", {
         -- 1) Find File (giống mặc định về vị trí, hành vi theo bạn)
         {
           icon = " ",
@@ -110,15 +109,22 @@ return {
             })
           end,
         },
+
         -- 7) Restore Session
         {
           icon = " ",
           key = "s",
           desc = "Restore Session",
           action = function()
-            S().session.load()
+            local ok_persist, persistence = pcall(require, "persistence")
+            if ok_persist then
+              persistence.load()
+            else
+              vim.notify("Chưa có snacks.session và cũng không tìm thấy persistence.nvim", vim.log.levels.WARN)
+            end
           end,
         },
+
         -- 8) Lazy Extras
         {
           icon = " ",
@@ -146,9 +152,9 @@ return {
             vim.cmd("qall")
           end,
         },
-      }
+      }, opts.dashboard.preset or {})
 
-      opts.terminal = {
+      opts.terminal = vim.tbl_deep_extend("force", {
         start_insert = true,
         win = {
           position = "float", -- nổi
@@ -156,7 +162,7 @@ return {
           width = 0.9, -- 90% chiều ngang màn hình
           height = 0.9, -- 90% chiều dọc màn hình
         },
-      }
+      }, opts.terminal or {})
 
       return opts
     end,

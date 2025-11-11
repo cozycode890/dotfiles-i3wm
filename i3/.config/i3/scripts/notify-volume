@@ -3,13 +3,19 @@
 
 step=10
 case "$1" in
-up) pamixer --allow-boost --increase $step ;;
-down) pamixer --decrease $step ;;
-mute | toggle) pamixer --toggle-mute ;;
+up)
+  wpctl set-volume @DEFAULT_AUDIO_SINK@ "${step}%+"
+  ;;
+down)
+  wpctl set-volume @DEFAULT_AUDIO_SINK@ "${step}%-"
+  ;;
+mute | toggle)
+  wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+  ;;
 esac
 
-vol=$(pamixer --get-volume)
-muted=$(pamixer --get-mute)
+vol=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print int($2*100)}')
+muted=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | grep -q MUTED && echo true || echo false)
 
 if [ "$muted" = "true" ]; then
   title="🔇 Muted"
