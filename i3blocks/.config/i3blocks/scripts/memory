@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# i3blocks memory (markup=pango)
+# Giữ nguyên palette Nord, thêm icon bộ nhớ () và wedge trái 
+
+BG_BAR="#1F2335"  # nền thanh bar
+SEG_BG="#7AA2F7"  # viên cyan
+FG_DARK="#2e3440" # chữ chính trên nền cyan
+FG_DIM="#3b4252"  # chữ phụ (dấu /)
+COLOR_PCT="#272e33"
+SIZE_SEP_LEFT="18pt"
+SIZE_SEP_RIGHT="xx-large"
+SIZE_ICON="large"
+SIZE_TEXT="medium"
+RISE_TEXT="6pt"
+RISE_ICON="4pt"
+ICON_MEM="" # biểu tượng RAM
+
+TYPE="${BLOCK_INSTANCE:-mem}" # "mem" (default) or "swap"
+
+awk -v type="$TYPE" \
+  -v bg="$BG_BAR" -v seg="$SEG_BG" \
+  -v fg_dark="$FG_DARK" -v fg_dim="$FG_DIM" \
+  -v size_sep_left="$SIZE_SEP_LEFT" -v size_sep_right="$SIZE_SEP_RIGHT" -v size_icon="$SIZE_ICON" \
+  -v size_text="$SIZE_TEXT" -v rise_text="$RISE_TEXT" \
+  -v icon="$ICON_MEM" -v color_pct="$COLOR_PCT" \
+  -v rise_icon="$RISE_ICON" '
+/^MemTotal:/        { mem_total=$2 }
+/^MemFree:/         { mem_free=$2 }
+/^MemAvailable:/    { mem_avail=$2 }
+/^Buffers:/         { buffers=$2 }
+/^Cached:/          { cached=$2 }
+/^SReclaimable:/    { sreclaimable=$2 }
+/^Shmem:/           { shmem=$2 }
+/^SwapTotal:/       { swap_total=$2 }
+/^SwapFree:/        { swap_free=$2 }
+
+END {
+  if (type == "swap") {
+    total = swap_total
+    used  = (swap_total - swap_free)
+  } else {
+    total = mem_total
+    if (mem_avail > 0) {
+      used = mem_total - mem_avail
+    } else {
+      avail = mem_free + buffers + cached + sreclaimable - shmem
+      if (avail < 0) avail = 0
+      used = mem_total - avail
+    }
+  }
+
+  pct = 0
+  if (total > 0) pct = used / total * 100.0
+
+  # ── Wedge trái ─────────────────────────────────────────────────────────────
+  printf("<span foreground=\"%s\" background=\"%s\" size=\"%s\"> 󱎕</span>",
+         seg, bg, size_sep_left)
+
+  # ── Nội dung chính ─────────────────────────────────────────────────────────
+  printf("<span background=\"%s\"> ", seg)
+  printf("<span foreground=\"%s\" size=\"%s\" rise=\"%s\">%s&#8202;</span> ", fg_dark, size_icon, rise_icon, icon)
+  printf("<span foreground=\"%s\" size=\"%s\" rise=\"%s\">%.0f%%</span>  </span>", color_pct, size_text, rise_text, pct)
+
+  # ── Wedge phải ─────────────────────────────────────────────────────────────
+  printf("<span background=\"%s\" foreground=\"%s\" size=\"%s\"></span>\n",
+         seg, bg, size_sep_right)
+
+  # ── short text (cùng dạng, i3blocks yêu cầu 2 dòng đầu) ───────────────────
+  printf("<span background=\"%s\"> ", seg)
+  printf("<span foreground=\"%s\" size=\"%s\">%s</span> ", fg_dark, size_icon, icon)
+  printf("<span size=\"%s\" rise=\"%s\">%.0f%%</span> </span>", size_text, rise_text, pct)
+  printf("<span background=\"%s\" foreground=\"%s\" size=\"%s\"></span>\n",
+         seg, bg, size_sep_right)
+
+  # ── màu (line 3) ───────────────────────────────────────────────────────────
+  if (pct > 90)      print("#BF616A");
+  else if (pct > 80) print("#D08770");
+  else if (pct > 70) print("#EBCB8B");
+}
+' /proc/meminfo

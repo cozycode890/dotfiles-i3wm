@@ -113,6 +113,7 @@ alias tb="adb shell pm disable-user --user 0"
 alias db="adb shell pm uninstall -k --user 0"
 alias ab="adb shell cmd package install-existing --user 0"
 alias xborders='~/.local/bin/xborders --border-radius 10 --border-width 2 --disable-version-warning --border-rgba "#d4be98"'
+alias fzf="fzf --preview 'bat --style=numbers --color=always {}' --preview-window=right:60%"
 
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 

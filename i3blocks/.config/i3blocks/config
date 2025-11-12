@@ -1,0 +1,37 @@
+separator=false
+separator_block_width=0
+min_width=100%
+
+[disk]
+command=$HOME/.config/i3blocks/scripts/disk_usage
+markup=pango
+interval=1
+
+[volume-pulseaudio]
+command=$HOME/.config/i3blocks/scripts/volume-pulseaudio
+markup=pango
+interval=1
+[mem]
+command=~/.config/i3blocks/scripts/memory
+interval=1
+markup=pango
+
+[battery]
+command=$HOME/.config/i3blocks/scripts/battery
+interval=1
+markup=pango
+
+[cpu_usage]
+command=$HOME/.config/i3blocks/scripts/cpu_usage.pl
+interval=1
+markup=pango
+
+[date]
+command=echo "<span foreground='#81A1C1' background='#1F2335' size='medium' rise='4pt'> &#8202;</span> <span size='medium' background='#1F2335' rise='4pt'>$(date +"%Y-%m-%d")  </span>"; if [ $button ]; then orage -t; fi
+markup=pango
+interval=1
+
+[time]
+command=echo "<span foreground='#7AA2F7' background='#1F2335' size='xx-large'>󱎕</span><span background='#7AA2F7'> <span background='#7AA2F7' foreground='#2e3440' size='large' rise='2pt'>&#8202;</span> <span foreground='#272e33' size='medium' rise='5pt'>$(date +"%H:%M")</span>  </span>"
+markup=pango
+interval=1

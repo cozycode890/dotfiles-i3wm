@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+BG_BAR="#1F2335"
+SEG_BG="#7AA2F7"
+FG_DARK="#2e3440"
+FG_TEXT="#3b4252"
+COLOR_PCT="#272e33"
+ICON_DRIVE=""
+SEP_LEFT="󱎕"
+SEP_RIGHT=""
+SIZE_ICON="large"
+SIZE_TEXT="medium"
+SIZE_SEP="xx-large"
+RISE_TEXT="6pt"
+RISE_ICON="4pt"
+
+MOUNT="${I3BLOCKS_INSTANCE:-/}"
+
+# Lấy phần trăm dùng: ưu tiên df --output, fallback pipeline cũ
+if df -P --output=pcent "$MOUNT" >/dev/null 2>&1; then
+  used_pct="$(df -P --output=pcent "$MOUNT" | tail -n1 | xargs)"
+else
+  used_pct="$(df -hP "$MOUNT" | awk 'END{print $5}')"
+fi
+
+# Nếu empty thì đprintf "<span foreground='%s' size='%s' rise='%s'>%s%%</span>  </span>" \
+"$COLOR_PCT" "$SIZE_TEXT" "$RISE_TEXT" "$USED_PCT"ặt 0%
+[ -n "$used_pct" ] || used_pct="0%"
+
+# In ra Pango
+printf "<span foreground='%s' background='%s' size='%s'>%s</span>" \
+  "$SEG_BG" "$BG_BAR" "$SIZE_SEP" "$SEP_LEFT"
+
+printf "<span background='%s'> " "$SEG_BG"
+printf "<span foreground='%s' size='%s' rise='%s'>%s&#8202;</span> " "$FG_DARK" "$SIZE_ICON" "$RISE_ICON" "$ICON_DRIVE"
+printf "<span foreground='%s' size='%s' rise='%s'>%s</span>  </span>" "$COLOR_PCT" "$SIZE_TEXT" "$RISE_TEXT" "$used_pct"
+
+printf "<span background='%s' foreground='%s' size='%s'>%s</span>\n" \
+  "$SEG_BG" "$BG_BAR" "$SIZE_SEP" "$SEP_RIGHT"

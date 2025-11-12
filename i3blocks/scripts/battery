@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ── Config ────────────────────────────────────────────────────────────────────
+# Everforest
+COLOR_OK="#A7C080"
+COLOR_WARN="#DBBC7F"
+COLOR_CRIT="#E67E80"
+COLOR_ICON="#81A1C1"
+
+SIZE_ICON="medium"
+SIZE_TEXT="medium"
+RISE_TEXT="2pt"
+
+ICON_FULL=""
+ICON_75=""
+ICON_50=""
+ICON_25=""
+ICON_0=""
+ICON_CHG="" # plug/charging
+
+BAT_NUMBER="${BAT_NUMBER:-}" # cố định pin cụ thể (vd: 0), để trống = gộp tất cả
+LABEL="${LABEL:-}"
+POWERLINE="${POWERLINE:-1}"
+SHOW_TIME="${SHOW_TIME:-1}"
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+pick_color() {
+  local p="$1"
+  if ((p < 10)); then
+    echo "$COLOR_CRIT"
+  elif ((p < 25)); then
+    echo "$COLOR_WARN"
+  else
+    echo "$COLOR_OK"
+  fi
+}
+
+pick_icon() {
+  local p="$1" st="$2" ac="$3" # ac: on-line/off-line/unknown
+  # conservation mode: "Not charging" + AC on-line → vẫn ưu tiên icon sạc
+  if [[ "$st" == "Charging" || "$ac" == "on-line" ]]; then
+    echo "$ICON_CHG"
+    return
+  fi
+  if ((p >= 90)); then
+    echo "$ICON_FULL"
+  elif ((p >= 65)); then
+    echo "$ICON_75"
+  elif ((p >= 40)); then
+    echo "$ICON_50"
+  elif ((p >= 15)); then
+    echo "$ICON_25"
+  else
+    echo "$ICON_0"
+  fi
+}
+
+# ── Read AC adapter state ─────────────────────────────────────────────────────
+ac_state="unknown"
+if have acpi; then
+  if ac_line="$(acpi -a 2>/dev/null | head -n1)"; then
+    # Examples: "Adapter 0: on-line" / "Adapter 0: off-line"
+    if [[ "$ac_line" =~ :[[:space:]]+([[:alpha:]-]+) ]]; then
+      ac_state="${BASH_REMATCH[1]}" # on-line | off-line
+    fi
+  fi
+fi
+
+# ── Read battery via acpi (fallback upower) ───────────────────────────────────
+percent=0
+status="Unknown"
+time_str=""
+
+if have acpi; then
+  if [[ -n "$BAT_NUMBER" ]]; then
+    mapfile -t lines < <(acpi -b 2>/dev/null | grep -E "Battery[[:space:]]+$BAT_NUMBER:")
+  else
+    mapfile -t lines < <(acpi -b 2>/dev/null | grep -E "^Battery")
+  fi
+  ((${#lines[@]})) || exit 0
+
+  total=0
+  count=0
+  st_last="Unknown"
+  t_left=""
+  for ln in "${lines[@]}"; do
+    # 1) status: cho phép nhiều từ & dấu gạch
+    if [[ "$ln" =~ :[[:space:]]+([^,]+), ]]; then
+      st_last="${BASH_REMATCH[1]}" # ví dụ: "Not charging", "Full", "Unknown", "Charging", ...
+      st_last="${st_last% *}"      # cắt đuôi cách vô tình (an toàn)
+    fi
+    # 2) percent: bắt số kèm %
+    if [[ "$ln" =~ ([0-9]{1,3})% ]]; then
+      pc="${BASH_REMATCH[1]}"
+      total=$((total + pc))
+      count=$((count + 1))
+    fi
+    # 3) optional time (02:13 hoặc 2:13 cũng bỏ qua — chỉ hiển thị đẹp nếu có HH:MM)
+    if [[ "$ln" =~ ([0-9]{2}:[0-9]{2})[[:space:]](remaining|until) ]]; then
+      t_left="${BASH_REMATCH[1]}"
+    fi
+  done
+
+  if ((count > 0)); then
+    percent=$((total / count))
+  else
+    # Fallback cứng: cố gắng lôi % đầu tiên từ toàn bộ output
+    pct_any="$(printf '%s\n' "${lines[@]}" | grep -o '[0-9]\{1,3\}%' | head -n1 | tr -dc '0-9')"
+    percent="${pct_any:-0}"
+  fi
+
+  # Chuẩn hoá status hiển thị:
+  # - Conservation mode thường trả "Not charging" dù đang cắm → nếu AC on-line, coi như "Charging"
+  if [[ "$st_last" =~ [Nn]ot[[:space:]]charging ]] && [[ "$ac_state" == "on-line" ]]; then
+    status="Charging"
+  else
+    # map vài biến thể phổ biến
+    case "$st_last" in
+    [Cc]harging) status="Charging" ;;
+    [Dd]ischarging) status="Discharging" ;;
+    [Ff]ull) status="Full" ;;
+    *) status="Unknown" ;;
+    esac
+  fi
+
+  time_str="$t_left"
+
+elif have upower; then
+  batt="$(upower -e | grep -m1 battery || true)"
+  [[ -z "$batt" ]] && exit 0
+  percent="$(upower -i "$batt" | awk -F': *' '/percentage/{gsub("%","",$2);print int($2)}')"
+  raw_state="$(upower -i "$batt" | awk -F': *' '/state/{print $2}')"
+  case "$raw_state" in
+  charging) status="Charging" ;;
+  discharging) status="Discharging" ;;
+  fully-charged) status="Full" ;;
+  *) status="Unknown" ;;
+  esac
+  time_str="" # upower "time to" định dạng khác, để trống cho sạch
+else
+  echo "acpi/upower not found"
+  exit 0
+fi
+
+# ── Build output (Pango) ──────────────────────────────────────────────────────
+CLR="$(pick_color "$percent")"
+ICON="$(pick_icon "$percent" "$status" "$ac_state")"
+
+content="$(
+  printf "<span foreground='%s' background='#1F2335' size='%s'> %s&#8202; </span>" "$COLOR_ICON" "$SIZE_ICON" "$ICON"
+  printf "<span foreground='%s' background='#1F2335' size='%s' rise='%s'>%s%%</span>" "$CLR" "$SIZE_TEXT" "$RISE_TEXT" "$percent"
+)"
+
+printf "%s\n" "$content"
+
+# Urgency khi gần cạn & đang xả
+if [[ "$status" == "Discharging" ]] && ((percent < 5)); then
+  exit 33
+fi

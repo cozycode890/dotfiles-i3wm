@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ── Config ────────────────────────────────────────────────────────────────────
+COLOR_NORMAL="#A7C080"
+COLOR_MUTED="#E67E80"
+
+ICON_VOL=""  # speaker
+ICON_MUTE="ﱝ" # mute
+
+SIZE_ICON="medium"
+SIZE_TEXT="medium"
+RISE_TEXT="4pt"
+RISE_ICON="4pt"
+
+# Chọn sink (mặc định: default sink). Có thể đặt PULSE_SINK trong môi trường.
+SINK_ARG=()
+if [[ -n "${PULSE_SINK:-}" ]]; then
+  SINK_ARG=(--sink "$PULSE_SINK")
+fi
+
+# ── Checks ────────────────────────────────────────────────────────────────────
+if ! command -v pamixer >/dev/null 2>&1; then
+  echo "pamixer not found"
+  exit 0
+fi
+
+# ── Click actions (i3blocks via BLOCK_BUTTON) ─────────────────────────────────
+case "${BLOCK_BUTTON:-}" in
+1) pamixer "${SINK_ARG[@]}" --toggle-mute ;; # Left click: mute/unmute
+4) pamixer "${SINK_ARG[@]}" --increase 5 ;;  # Scroll up: +5%
+5) pamixer "${SINK_ARG[@]}" --decrease 5 ;;  # Scroll down: -5%
+esac
+
+# ── State ─────────────────────────────────────────────────────────────────────
+muted="$(pamixer "${SINK_ARG[@]}" --get-mute || echo false)" # "true"/"false"
+vol="$(pamixer "${SINK_ARG[@]}" --get-volume 2>/dev/null || echo 0)"
+
+# ── Output (Pango) ────────────────────────────────────────────────────────────
+if [[ "$muted" == "false" ]]; then
+  printf "<span foreground='%s' background='#1F2335' size='%s' rise='%s'> %s </span>" "$COLOR_NORMAL" "$SIZE_ICON" "$RISE_ICON" "$ICON_VOL"
+  printf "<span background='#1F2335' size='%s' rise='%s'>%s%%</span>\n" "$SIZE_TEXT" "$RISE_TEXT" "$vol"
+else
+  printf "<span background='#1F2335' size='%s' rise='%s'>%s%%</span>" "$SIZE_TEXT" "$RISE_TEXT" "$vol"
+  printf "<span background='#1F2335' foreground='%s' size='%s' rise='%s'> %s </span>\n" "$COLOR_MUTED" "$SIZE_ICON" "$RISE_ICON" "$ICON_MUTE"
+fi

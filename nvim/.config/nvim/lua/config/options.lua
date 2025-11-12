@@ -62,5 +62,3 @@ for _, mode in ipairs({ "n", "x" }) do
   vim.keymap.set(mode, "j", 'v:count==0 and "gj" or "j"', expr_opts)
   vim.keymap.set(mode, "k", 'v:count==0 and "gk" or "k"', expr_opts)
 end
-
--- require("config/kitty_title").setup()

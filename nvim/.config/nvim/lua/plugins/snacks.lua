@@ -3,6 +3,36 @@ return {
     "folke/snacks.nvim",
     keys = {
       {
+        "<leader>fg",
+        function()
+          local Snacks = require("snacks")
+          -- Lấy thư mục hiện tại: dir của buffer nếu có, else cwd
+          local bufpath = vim.api.nvim_buf_get_name(0)
+          local curdir = (bufpath ~= "" and vim.fn.fnamemodify(bufpath, ":p:h")) or (vim.uv.cwd() or vim.fn.getcwd())
+          -- Lấy thư mục cha (":h:h" = lấy dir rồi lại lấy dir cha)
+          local parent = vim.fn.fnamemodify(curdir, ":p:h")
+          -- Nếu đang ở root thì parent = root
+          if parent == "" then
+            parent = curdir
+          end
+
+          Snacks.picker.grep({
+            cmd = "rg",
+            cwd = parent,
+            args = {
+              "--hidden",
+              "--glob",
+              "!**/.git/**",
+              -- thêm tuỳ chọn loại trừ nếu muốn:
+              -- "--glob", "!**/node_modules/**",
+              -- "--glob", "!**/dist/**",
+            },
+          })
+        end,
+        desc = "Find Text (parent of current dir)",
+        mode = "n",
+      },
+      {
         "<leader>E",
         function()
           require("snacks").explorer() -- để Snacks tự chọn root theo vim.g.root_spec
@@ -10,7 +40,15 @@ return {
         desc = "Explorer (project root by spec)",
         mode = "n",
       },
-
+      {
+        "<c-/>",
+        function()
+          local bufpath = vim.api.nvim_buf_get_name(0)
+          local dir = (bufpath ~= "" and vim.fn.fnamemodify(bufpath, ":p:h")) or vim.uv.cwd()
+          Snacks.terminal(nil, { cwd = dir })
+        end,
+        desc = "Terminal (buffer dir)",
+      },
       {
         "<leader>e",
         function()
@@ -20,18 +58,6 @@ return {
           Snacks.explorer({ cwd = dir })
         end,
         desc = "Explorer (buffer's directory)",
-        mode = "n",
-      },
-
-      {
-        "<leader>fg",
-        function()
-          require("snacks").picker.grep({
-            cmd = "rg",
-            args = { "--hidden", "--glob", "!**/.git/**" },
-          })
-        end,
-        desc = "Find Text",
         mode = "n",
       },
     },
