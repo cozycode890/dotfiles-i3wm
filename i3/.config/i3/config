@@ -251,6 +251,24 @@ for_window [class="r_x11|R_x11"] floating enable
 
 for_window [class="matplotlib"] floating enable
 
+for_window [class="kooha"] floating enable
+
+for_window [class="matplotlib"] floating enable, resize set 75 ppt 75 ppt, move position center
+
+for_window [class="Upscayl"] floating enable, resize set 75 ppt 75 ppt, move position center
+
+for_window [class="baobab"] floating enable, resize set 75 ppt 75 ppt, move position center
+
+for_window [class="Firefox Developer Edition" title=".*Google Accounts.*"] floating enable
+
+for_window [class="mpv"] floating enable, resize set 75 ppt 75 ppt, move position center
+
+for_window [class="Plant vs Zombie"] move container to workspace number 3
+
+for_window [class="idea"] floating enable, resize set 75 ppt 25 ppt, move container to workspace number 3
+
+for_window [class="Arandr"] floating enable, resize set 50 ppt 50 ppt, move position center
+
 # ────────────────────────────── 9. AUTOSTART SAFE ──────────────────────────
 
 # NumlockX
@@ -294,11 +312,11 @@ exec --no-startup-id sh -c 'sleep 2; easyeffects -l "LoudnessCrystalEqualizer"'
 exec_always --no-startup-id picom -c ~/.config/picom/picom.conf
 
 # Nitrogen
-exec_always --no-startup-id nitrogen --restore
+# exec_always --no-startup-id nitrogen --restore
+exec --no-startup-id ~/.config/i3/scripts/xwinwrap
 
 # Xborders
-# exec_always --no-startup-id ~/.config/i3/binxborders --border-radius 10 --border-width 2 --disable-version-warning --border-rgba "#d4be98"
-exec_always --no-startup-id ~/.config/i3/scripts/xborders --border-radius 10 --border-width 2 --disable-version-warning --border-rgba "#7aa2f7"
+exec_always --no-startup-id ~/.config/i3/scripts/xborders --border-radius 10 --border-width 3 --disable-version-warning --border-rgba "#cba6f7"
 
 # ────────────────────────────── 10. THANH BAR ──────────────────────────────
 # bar {
@@ -324,28 +342,30 @@ exec_always --no-startup-id ~/.config/i3/scripts/xborders --border-radius 10 --b
 #     }
 # }
 
-bar {
-    height 23
-    position bottom
-    font pango:OperatorMono Nerd Font Bold 10
-    status_command i3blocks
-    tray_padding 2
-    strip_workspace_numbers yes
+# bar {
+#     height 23
+#     position bottom
+#     font pango:OperatorMono Nerd Font Bold 10
+#     status_command i3blocks
+#     tray_padding 2
+#     strip_workspace_numbers yes
+#
+#     colors {
+#       # i3bar
+#       background        #1a1b26
+#       statusline        #c0caf5
+#       separator         #1a1b26
+#
+#       #                    border    background  text
+#       focused_workspace    #7aa2f7   #7aa2f7     #1a1b26
+#       active_workspace     #1a1b26   #292e42     #7dcfff
+#       inactive_workspace   #1a1b26   #1a1b26     #565f89
+#       urgent_workspace     #f7768e   #1a1b26     #f7768e
+#       binding_mode         #e0af68   #1a1b26     #e0af68
+#     }
+# }
 
-    colors {
-      # i3bar
-      background        #1a1b26
-      statusline        #c0caf5
-      separator         #1a1b26
-
-      #                    border    background  text
-      focused_workspace    #7aa2f7   #7aa2f7     #1a1b26
-      active_workspace     #1a1b26   #292e42     #7dcfff
-      inactive_workspace   #1a1b26   #1a1b26     #565f89
-      urgent_workspace     #f7768e   #1a1b26     #f7768e
-      binding_mode         #e0af68   #1a1b26     #e0af68
-    }
-}
+exec_always --no-startup-id ~/.config/polybar/candy/launch.sh
 
 # ───────────────────────────── 11. WINDOWS COLOR SETTINGS  ─────────────────
 ## class                border   backgr.   text     indicator child_border

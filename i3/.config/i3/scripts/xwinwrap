@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+
+# Cẩn thận hơn 1 chút
+set -u -o pipefail
+
+LOCKFILE="/tmp/video-wallpaper.lock"
+VIDEO="$HOME/Videos/wallpaper-new.mp4"
+GEOM="1920x1080+0+0"
+
+# ---------- Hàm tiện ích ----------
+
+cleanup() {
+  # Xóa lock
+  rm -f "$LOCKFILE" 2>/dev/null || true
+
+  # Tắt xwinwrap + mpv còn sót lại
+  pkill -x xwinwrap 2>/dev/null || true
+  pkill -x mpv 2>/dev/null || true
+}
+
+# Khi script bị Ctrl+C, kill, logout... thì dọn dẹp
+trap 'cleanup; exit 0' INT TERM EXIT
+
+# ---------- Chống chạy trùng ----------
+
+if [[ -f "$LOCKFILE" ]]; then
+  old_pid="$(cat "$LOCKFILE" 2>/dev/null || echo "")"
+  if [[ -n "$old_pid" ]] && kill -0 "$old_pid" 2>/dev/null; then
+    echo "Video wallpaper đã chạy sẵn (pid = $old_pid), thoát."
+    exit 0
+  else
+    # Lock cũ nhưng process chết rồi
+    rm -f "$LOCKFILE" 2>/dev/null || true
+  fi
+fi
+
+echo "$$" >"$LOCKFILE"
+
+# ---------- Kiểm tra phụ thuộc ----------
+
+for cmd in xwinwrap mpv; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "Lỗi: không tìm thấy lệnh '$cmd' trong PATH." >&2
+    exit 1
+  fi
+done
+
+if [[ ! -f "$VIDEO" ]]; then
+  echo "Lỗi: không tìm thấy file video: $VIDEO" >&2
+  exit 1
+fi
+
+# ---------- Kill instance cũ nếu còn ----------
+
+pkill -x xwinwrap 2>/dev/null || true
+pkill -x mpv 2>/dev/null || true
+
+# ---------- Vòng lặp chạy + auto restart ----------
+
+while :; do
+  echo "Khởi động xwinwrap + mpv..."
+
+  xwinwrap -b -ni -nf -ov -g "$GEOM" -- \
+    mpv --wid=%WID --loop --no-audio --no-osd-bar --panscan=1.0 \
+    --no-border \
+    --no-input-default-bindings \
+    --input-vo-keyboard=no \
+    --input-media-keys=no \
+    --no-osc \
+    "$VIDEO" &
+
+  child_pid=$!
+  wait "$child_pid"
+  status=$?
+
+  # Nếu thoát bình thường (status 0) => coi như user cố ý tắt, không restart
+  if [[ "$status" -eq 0 ]]; then
+    echo "xwinwrap/mpv thoát bình thường (status = 0), không restart."
+    break
+  else
+    echo "xwinwrap/mpv lỗi (status = $status), restart sau 2s..."
+    sleep 2
+  fi
+done
+
+# Cleanup sẽ tự chạy nhờ trap EXIT

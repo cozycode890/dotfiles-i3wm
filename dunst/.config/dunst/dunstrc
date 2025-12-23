@@ -1,7 +1,7 @@
 [global]
     # Look & feel
     font = OperatorMono Nerd Font 10
-    allow_markup = yes
+    markup = full
     format = "<b>%s</b>\n%b"
     vertical_alignment = center
     ellipsize = end
@@ -12,24 +12,15 @@
 
     # Geometry
     width = 360
-    height = 300
+    height = (0, 300)
     origin = top-right
-    offset = 16x16
+    offset = (16,16)
     padding = 10
     horizontal_padding = 12
     text_icon_padding = 8
     corner_radius = 10
     separator_height = 2
     gap_size = 8
-
-    # Colors (Tokyo Night - Night)
-    background = "#1a1b26"
-    foreground = "#c0caf5"
-    frame_color = "#7aa2f7"
-    separator_color = frame
-
-    # Transparency (0–100, higher = more transparent)
-    transparency = 0
 
     # Icons
     icon_theme = Papirus
@@ -54,27 +45,41 @@
     progress_bar_min_width = 120
     progress_bar_max_width = 320
     progress_bar_frame_width = 1
-    progress_bar_corner_radius = 6
+    progress_bar_corner_radius = 3
 
+    frame_color = "#cba6f7"
+    separator_color= frame
+    highlight = "#cba6f7"
+
+; Catppuccin mocha
 [urgency_low]
-    timeout = 6
-    background = "#16161e"
-    foreground = "#c0caf5"
-    frame_color = "#565f89"
+background = "#1e1e2ecc"
+foreground = "#a6adc8ff"
 
 [urgency_normal]
-    timeout = 8
-    background = "#1a1b26"
-    foreground = "#c0caf5"
-    frame_color = "#7aa2f7"  # blue
-    # highlight links / actions
-    highlight = "#7dcfff"
+background = "#1e1e2e99"
+foreground = "#cdd6f4ff"
 
 [urgency_critical]
-    timeout = 0
-    background = "#1a1b26"
-    foreground = "#c0caf5"
-    frame_color = "#f7768e"  # red
-    # make title stand out
-    markup = full
+background = "#1e1e2e"
+foreground = "#cdd6f4b3"
+frame_color = "#f38ba8ff"
 
+; Tokyonight moon
+; [urgency_low]
+;     timeout = 6
+;     background = "#16161ecc"   # 80% đục (20% trong suốt)
+;     foreground = "#c0caf5ff"   # chữ full opaque
+;     frame_color = "#565f89cc"
+
+; [urgency_normal]
+;     timeout = 8
+;     background = "#1a1b2699"   # 60% đục (40% trong suốt)
+;     foreground = "#c0caf5ff"
+;     frame_color = "#7aa2f799"
+
+; [urgency_critical]
+;     timeout = 0
+;     background = "#1a1b26b3"   # ~70% đục
+;     foreground = "#c0caf5ff"
+;     frame_color = "#f7768eb3"

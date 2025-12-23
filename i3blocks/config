@@ -32,6 +32,6 @@ markup=pango
 interval=1
 
 [time]
-command=echo "<span foreground='#7AA2F7' background='#1F2335' size='xx-large'>󱎕</span><span background='#7AA2F7'> <span background='#7AA2F7' foreground='#2e3440' size='large' rise='2pt'>&#8202;</span> <span foreground='#272e33' size='medium' rise='5pt'>$(date +"%H:%M")</span>  </span>"
+command=echo "<span foreground='#7AA2F7' background='#1F2335' size='xx-large'>󱎕</span><span background='#7AA2F7'> <span background='#7AA2F7' foreground='#2e3440' size='large' rise='2pt'>&#8202; </span> <span foreground='#272e33' size='medium' rise='5pt'>$(date +"%H:%M")</span>  </span>"
 markup=pango
 interval=1

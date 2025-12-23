@@ -1,143 +1,151 @@
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
-
-# Path to your Oh My Zsh installation.
+# =============================
+# 💤 Oh My Zsh & zsh-autocomplete
+# =============================
 export ZSH="$HOME/.oh-my-zsh"
+export ZSH_CUSTOM="${ZSH_CUSTOM:-$ZSH/custom}"
+ZSH_THEME=""   # dùng Starship làm prompt
+ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
 
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time Oh My Zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+# =============================
+# 📜 History (chống trùng)
+# =============================
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=10000
+SAVEHIST=10000
 
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in $ZSH/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+setopt HIST_IGNORE_DUPS       # không lưu 2 lệnh y hệt liên tiếp
+setopt HIST_IGNORE_ALL_DUPS   # nếu lệnh đã có trong history -> xóa bản cũ, giữ bản mới
+setopt HIST_FIND_NO_DUPS      # khi search history / dùng history menu, không show trùng
+setopt HIST_SAVE_NO_DUPS      # khi ghi xuống file history, loại trùng
 
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
+# Dùng vi-style keybindings trước khi load zsh-autocomplete
+bindkey -v
 
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
+# ---- Oh My Zsh ----
+plugins=(
+  git
+  zsh-syntax-highlighting
+  zsh-autosuggestions
+)
+source "$ZSH/oh-my-zsh.sh"
 
-# Uncomment one of the following lines to change the auto-update behavior
-# zstyle ':omz:update' mode disabled  # disable automatic updates
-# zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
-
-# Uncomment the following line to change how often to auto-update (in days).
-# zstyle ':omz:update' frequency 13
-
-# Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS="true"
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# You can also set it to another string to have that shown instead of the default red dots.
-# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
-# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting history sudo encode64 copypath)
-
-source $ZSH/oh-my-zsh.sh
-
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='nvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch $(uname -m)"
-
-# Set personal aliases, overriding those provided by Oh My Zsh libs,
-# plugins, and themes. Aliases can be placed here, though Oh My Zsh
-# users are encouraged to define aliases within a top-level file in
-# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
-# - $ZSH_CUSTOM/aliases.zsh
-# - $ZSH_CUSTOM/macos.zsh
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-
-alias ls="eza -a --color=always --long --no-filesize --icons=always --no-time --no-user --no-permissions --no-symlinks"
-alias ll="eza -a --color=always --long --no-filesize --icons=always --no-time --no-user --no-permissions --no-symlinks"
-alias la="eza -la --color=always --icons=always"
-alias tree="eza --tree --color=always --icons=always"
-alias zshrc="nvim ~/.zshrc"
-alias cd="z"
-alias tb="adb shell pm disable-user --user 0"
-alias db="adb shell pm uninstall -k --user 0"
-alias ab="adb shell cmd package install-existing --user 0"
-alias xborders='~/.local/bin/xborders --border-radius 10 --border-width 2 --disable-version-warning --border-rgba "#d4be98"'
-alias fzf="fzf --preview 'bat --style=numbers --color=always {}' --preview-window=right:60%"
-
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
-
-if ! ssh-add -l >/dev/null 2>&1; then
-  ssh-add ~/.ssh/id_ed25519 2>/dev/null
-fi
-
-function y() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-	yazi "$@" --cwd-file="$tmp"
-	IFS= read -r -d '' cwd < "$tmp"
-	[ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
-	rm -f -- "$tmp"
-}
-alias yazi=y
-
+# =============================
+# 🌍 Môi trường & PATH
+# =============================
 export EDITOR=nvim
 export VISUAL=nvim
 export JAVA_HOME=/usr/lib/jvm/default
-export PATH="$JAVA_HOME/bin:$PATH"
 
+typeset -U path PATH
+path=("$JAVA_HOME/bin" $path)
+
+# =============================
+# 🔐 SSH agent
+# =============================
+export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR:-/run/user/$UID}/ssh-agent.socket"
+if command -v ssh-add >/dev/null 2>&1; then
+  if ! ssh-add -l >/dev/null 2>&1; then
+    ssh-add ~/.ssh/id_ed25519 >/dev/null 2>&1
+  fi
+fi
+
+# =============================
+# 🔎 FZF
+# =============================
+export FZF_DEFAULT_COMMAND='fd --hidden --strip-cwd-prefix --exclude .git .'
+
+export FZF_DEFAULT_OPTS="\
+--height=40% \
+--layout=reverse \
+--preview 'if file --mime-type {} | grep -q image; then
+  chafa {} --format=symbols --size=40x20
+else
+  bat --style=numbers --color=always {} || file {}
+fi' \
+--preview-window=right:60%"
+export FZF_CTRL_T_OPTS="$FZF_DEFAULT_OPTS"
+export FZF_ALT_C_OPTS="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+
+_fzf_compgen_path() {
+  fd --hidden --exclude .git . "$1"
+}
+
+_fzf_compgen_dir() {
+  fd --type=d --hidden --exclude .git . "$1"
+}
+
+source ~/.config/fzf-git.sh/fzf-git.sh
+
+# =============================
+# 📁 Aliases
+# =============================
+alias ls="eza -a --color=always --long --no-filesize --icons=always --no-time --no-user --no-permissions --no-symlinks"
+alias ll="$ls"
+alias la="eza -la --color=always --icons=always"
+alias tree="eza --tree --color=always --icons=always"
+
+alias cd="z"
+
+alias tb="adb shell pm disable-user --user 0"
+alias db="adb shell pm uninstall -k --user 0"
+alias ab="adb shell cmd package install-existing --user 0"
+
+alias lg="lazygit"
+
+# =============================
+# 📂 Yazi cd helper
+# =============================
+y() {
+  local tmp cwd
+  tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+  yazi "$@" --cwd-file="$tmp"
+  IFS= read -r -d '' cwd <"$tmp"
+  [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+  rm -f -- "$tmp"
+}
+alias yazi=y
+
+# =============================
+# 🎨 Giao diện & highlight
+# =============================
 ZSH_HIGHLIGHT_STYLES[comment]='fg=8,dim'
 
+# =============================
+# 🔗 Tích hợp
+# =============================
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
+eval "$(fzf --zsh)"
 
-# source ~/.config/fzf/theme.zsh
+# =============================
+# 🚀 Tăng tốc đọc .zshrc (zcompile)
+# =============================
+if command -v zcompile >/dev/null 2>&1; then
+  rc="${ZDOTDIR:-$HOME}/.zshrc"
+  [[ -s "${rc}.zwc" && "${rc}" -ot "${rc}.zwc" ]] || zcompile -U "$rc" 2>/dev/null
+fi
+
+# =============================
+# ⌨️ Keybindings & phím tắt
+# =============================
+
+# ------------------------------
+# 🪄 Lịch sử và tìm kiếm lệnh
+# ------------------------------
+bindkey '^K' up-history                   # Ctrl + P: lệnh trước
+bindkey '^J' down-history                 # Ctrl + N: lệnh sau
+
+# ------------------------------
+# 🧩 Tiện ích thường dùng
+# ------------------------------
+# zoxide helper (jump thư mục)
+zi() {
+  local dir
+  dir=$(zoxide query -l | fzf --height=40% --reverse \
+    --preview 'eza -1 --color=always {}' --preview-window=right:40%) && cd "$dir"
+}
+if command -v zoxide >/dev/null 2>&1; then
+  bindkey -s '^Z' 'zi^M'
+fi
+
+export BAT_THEME="tokyonight_moon"
