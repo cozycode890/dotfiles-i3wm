@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# mở menu của nm-applet bằng cách click vào icon của nó trong tray
+# cần xdotool
+
+# tìm cửa sổ/biểu tượng chứa "nm-applet" (tùy WM/tray có thể khác)
+wid="$(xdotool search --name nm-applet 2>/dev/null | head -n1)"
+
+if [ -n "$wid" ]; then
+  # click chuột trái (button 1) vào nó
+  xdotool windowactivate "$wid" click 1
+else
+  # nếu chưa chạy thì chạy lên
+  nm-applet &
+fi
+

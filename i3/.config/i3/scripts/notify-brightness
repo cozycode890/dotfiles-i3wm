@@ -10,4 +10,4 @@ esac
 percent=$(brightnessctl -m | awk -F, '{gsub(/%/,"",$4); print $4}')
 dunstify -a "brightness" -i "display-brightness-symbolic" -t 1200 \
   -h string:x-dunst-stack-tag:brightness \
-  -h int:value:"$percent" "Độ sáng" "${percent}%"
+  -h int:value:"$percent" "Brightness" "${percent}%"

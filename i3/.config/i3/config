@@ -3,7 +3,7 @@ set $mod Mod4
 set $term kitty
 set $menu ~/.config/i3/scripts/dmenu-tokyonight -p 'Run:'
 set $fileman kitty yazi
-set $browser firefox-developer-edition
+set $browser zen-browser
 set $sound_manager pavucontrol
 set $bluetooth_manager Blueman-manager
 set $text_editor neovide
@@ -19,13 +19,11 @@ mouse_warping output
 focus_on_window_activation smart
 force_display_urgency_hint 500 ms
 
-# Gaps & borders (đẹp hơn khi còn 1 cửa sổ)
 gaps inner 5
 gaps outer 0
-for_window [class="^.*"] border pixel 0
-#smart_gaps off
-#smart_borders on
-hide_edge_borders none
+default_border pixel 0
+default_floating_border pixel 0
+hide_edge_borders both
 
 # ────────────────────── 2. WORKSPACE (đặt tên rõ ràng) ─────────────────────
 set $ws1  "1"
@@ -38,7 +36,6 @@ set $ws7  "7"
 set $ws8  "8"
 set $ws9  "9"
 
-# Chuyển WS
 bindsym $mod+1  workspace $ws1
 bindsym $mod+2  workspace $ws2
 bindsym $mod+3  workspace $ws3
@@ -49,7 +46,6 @@ bindsym $mod+7  workspace $ws7
 bindsym $mod+8  workspace $ws8
 bindsym $mod+9  workspace $ws9
 
-# Di chuyển container sang WS
 bindsym $mod+Shift+1 move container to workspace $ws1
 bindsym $mod+Shift+2 move container to workspace $ws2
 bindsym $mod+Shift+3 move container to workspace $ws3
@@ -60,12 +56,10 @@ bindsym $mod+Shift+7 move container to workspace $ws7
 bindsym $mod+Shift+8 move container to workspace $ws8
 bindsym $mod+Shift+9 move container to workspace $ws9
 
-# next/previous workspace
 bindsym Mod1+Tab workspace back_and_forth
 bindsym $mod+Shift+Tab workspace prev
 bindsym $mod+Tab workspace next
 
-#navigate workspaces next / previous
 bindsym Mod1+Ctrl+Right workspace next
 bindsym Mod1+Ctrl+Left workspace prev
 
@@ -77,12 +71,10 @@ bindsym $mod+b exec --no-startup-id $browser
 bindsym $mod+p exec --no-startup-id $sound_manager
 bindsym $mod+n exec --no-startup-id $text_editor
 
-# Thoát / Reload / Restart i3
 bindsym $mod+Shift+e exec --no-startup-id i3-nagbar -t warning -m 'Exit i3?' -b 'Yes' 'i3-msg exit'
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 
-# Kill focused window
 bindsym $mod+q kill
 
 bindsym $mod+s layout stacking
@@ -93,42 +85,35 @@ bindsym $mod+a focus parent
 bindsym $mod+Shift+a focus child
 
 # ───────────────────────── 4. DI CHUYỂN & LAYOUT ───────────────────────────
-# change focus
 bindsym $mod+$left focus left
 bindsym $mod+$down focus down
 bindsym $mod+$up focus up
 bindsym $mod+$right focus right
 
-# alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
-# move focused window
 bindsym $mod+Shift+$left move left
 bindsym $mod+Shift+$down move down
 bindsym $mod+Shift+$up move up
 bindsym $mod+Shift+$right move right
 
-# alternatively, you can use the cursor keys:
 bindsym $mod+Shift+Left move left
 bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
-# Split/Layout
 bindsym $mod+v split toggle
 bindsym $mod+f fullscreen toggle
 
-# Floating/Scratchpad
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+space focus mode_toggle
 bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
 
 # ─────────────────────────── 5. CHỤP MÀN HÌNH ──────────────────────────────
-# Ưu tiên flameshot; fallback scrot. Dùng --release để tránh bắn lặp.
 set $shot_dir Pictures/Screenshots
 
 bindsym --release Print exec --no-startup-id sh -c 'command -v flameshot >/dev/null && flameshot gui || scrot -s "$shot_dir/%Y-%m-%d_%H-%M-%S.png"'
@@ -136,17 +121,14 @@ bindsym --release $mod+Shift+s exec --no-startup-id sh -c 'command -v flameshot 
 bindsym --release $mod+Print exec --no-startup-id sh -c 'command -v flameshot >/dev/null && flameshot screen -p "$shot_dir" || scrot -s "$shot_dir/%Y-%m-%d_%H-%M-%S.png"'
 
 # ─────────────────────────── 6. ÂM LƯỢNG & SÁNG ────────────────────────────
-# Volume
 bindsym XF86AudioRaiseVolume exec --no-startup-id ~/.config/i3/scripts/notify-volume up
 bindsym XF86AudioLowerVolume exec --no-startup-id ~/.config/i3/scripts/notify-volume down
 bindsym XF86AudioMute        exec --no-startup-id ~/.config/i3/scripts/notify-volume toggle
 bindsym XF86AudioMicMute     exec --no-startup-id ~/.config/i3/scripts/mic-toggle
 
-# Brightness
 bindsym XF86MonBrightnessUp   exec --no-startup-id ~/.config/i3/scripts/notify-brightness up
 bindsym XF86MonBrightnessDown exec --no-startup-id ~/.config/i3/scripts/notify-brightness down
 
-# Media
 bindsym XF86AudioPlay  exec playerctl -a play-pause
 bindsym XF86AudioStop  exec playerctl -a pause
 bindsym XF86AudioNext  exec playerctl -a next
@@ -154,47 +136,33 @@ bindsym XF86AudioPrev  exec playerctl -a previous
 
 # ─────────────────────────────── 7. CHẾ ĐỘ RESIZE ──────────────────────────
 mode "resize-tiling" {
-        # These bindings trigger as soon as you enter the resize mode
 
-        # Pressing left will shrink the window’s width.
-        # Pressing right will grow the window’s width.
-        # Pressing up will shrink the window’s height.
-        # Pressing down will grow the window’s height.
        bindsym $left       resize shrink width 10 px or 10 ppt
        bindsym $down       resize grow height 10 px or 10 ppt
        bindsym $up         resize shrink height 10 px or 10 ppt
        bindsym $right      resize grow width 10 px or 10 ppt
 
-        # same bindings, but for the arrow keys
        bindsym Left        resize shrink width 5 px or 5 ppt
        bindsym Down        resize grow height 5 px or 5 ppt
        bindsym Up          resize shrink height 5 px or 5 ppt
        bindsym Right       resize grow width 5 px or 5 ppt
 
-        # back to normal: Enter or Escape
        bindsym Return mode "default"
        bindsym Escape mode "default"
 }
 
 mode "resize-floating" {
-        # These bindings trigger as soon as you enter the resize mode
 
-        # Pressing left will shrink the window’s width.
-        # Pressing right will grow the window’s width.
-        # Pressing up will shrink the window’s height.
-        # Pressing down will grow the window’s height.
        bindsym $left       resize shrink width 100 px or 100 ppt
        bindsym $down       resize grow height 100 px or 100 ppt
        bindsym $up         resize shrink height 100 px or 100 ppt
        bindsym $right      resize grow width 100 px or 100 ppt
 
-        # same bindings, but for the arrow keys
        bindsym Left        resize shrink width 10 px or 10 ppt
        bindsym Down        resize grow height 10 px or 10 ppt
        bindsym Up          resize shrink height 10 px or 10 ppt
        bindsym Right       resize grow width 10 px or 10 ppt
 
-        # back to normal: Enter or Escape
        bindsym Return mode "default"
        bindsym Escape mode "default"
 }
@@ -213,55 +181,25 @@ mode "$mode_system" {
     bindsym r exec --no-startup-id ~/.config/i3/scripts/i3exit.sh reboot, mode "default"
     bindsym s exec --no-startup-id ~/.config/i3/scripts/i3exit.sh shutdown, mode "default"
 
-    # back to normal: Enter or Escape
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
 
 # ─────────────────────────── 10. QUY TẮC CỬA SỔ ─────────────────────────────
-# Tự nổi cho dialog/utility/popup để không phá layout.
-for_window [window_type="dialog"] floating enable
-for_window [window_type="utility"] floating enable
-for_window [window_role="pop-up"] floating enable
-for_window [window_role="bubble"] floating enable
+for_window [window_type="dialog|utility|pop-up|bubble"] floating enable
 
-# App GUI hay dùng: nổi + center
-for_window [class="$sound_manager|$bluetooth_manager|Nm-connection-editor|Lxappearance|Qtconfig-qt4|qt5ct|Arandr|easyeffects"] floating enable, move position center
+for_window [class="firefox-developer-edition|zen" window_role="About|Dialog|Organizer"] floating enable
+for_window [class="firefox-developer-edition|zen" title="^Library|^Donwloads"] floating enable
+for_window [class="firefox-developer-edition|zen" title=".*Google Accounts.*"] floating enable, resize set 75 ppt 75 ppt
+for_window [class="firefox-developer-edition|zen" window_role="^page-info$"] floating enable, resize set 75 ppt 75 ppt
 
-# firefox-developer-edition popups -> float by default
-for_window [class="firefox-developer-edition" window_role="About|Dialog|Organizer"] floating enable
-for_window [class="firefox-developer-edition" window_type="dialog"] floating enable
-for_window [class="firefox-developer-edition" title="Library|Donwloads"] floating enable
-
-# flameshot
 for_window [class="flameshot" window_type="normal"] floating enable
 
-for_window [class="Nwg-look"] floating enable
+for_window [class="$sound_manager|$bluetooth_manager|Nm-connection-editor|Lxappearance|Qtconfig-qt4|qt5ct|Arandr|easyeffects|Nwg-look|org.gnome.SoundRecorder|matplotlib|Upscayl|baobab|mpv|kooha|matplotlib|r_x11|R_x11|Thunar"] floating enable, resize set 75 ppt 75 ppt, move position center
 
-for_window [class="org.gnome.SoundRecorder" window_type="normal"] floating enable
+for_window [class="neovide"] floating enable, resize set 90 ppt 60 ppt, move position center
 
-# Tự động đưa Spotify vào scratchpad khi mở
 for_window [class="Spotify"] move to scratchpad
-
-for_window [class="Xfce4-taskmanager"] floating enable
-
-for_window [class="Thunar"] floating enable
-
-for_window [class="r_x11|R_x11"] floating enable
-
-for_window [class="matplotlib"] floating enable
-
-for_window [class="kooha"] floating enable
-
-for_window [class="matplotlib"] floating enable, resize set 75 ppt 75 ppt, move position center
-
-for_window [class="Upscayl"] floating enable, resize set 75 ppt 75 ppt, move position center
-
-for_window [class="baobab"] floating enable, resize set 75 ppt 75 ppt, move position center
-
-for_window [class="Firefox Developer Edition" title=".*Google Accounts.*"] floating enable
-
-for_window [class="mpv"] floating enable, resize set 75 ppt 75 ppt, move position center
 
 for_window [class="Plant vs Zombie"] move container to workspace number 3
 
@@ -269,106 +207,40 @@ for_window [class="idea"] floating enable, resize set 75 ppt 25 ppt, move contai
 
 for_window [class="Arandr"] floating enable, resize set 50 ppt 50 ppt, move position center
 
+for_window [title="^cava*"] floating enable, move position center
+
 # ────────────────────────────── 9. AUTOSTART SAFE ──────────────────────────
 
-# NumlockX
 exec --no-startup-id numlockx
 
-# Nạp Xresources (cursor, DPI…)
 exec_always --no-startup-id xrdb -merge ~/.Xresources
 
-# XSettings daemon để GTK apps nhận theme/icon/font khi đang chạy
 exec --no-startup-id xsettingsd
 
-# chạy XDG autostart
 exec --no-startup-id dex -a -s /etc/xdg/autostart:~/.config/autostart
 
-# tự chạy ibus khi login
 exec --no-startup-id sh -c 'ibus-daemon -drx; sleep 4; ibus engine Bamboo::Candy'
 
-# Autostart light-locker
 exec --no-startup-id light-locker
 
-# Bơm env cho systemd-user (chỉ cần 1 lần ở file config)
-exec --no-startup-id systemctl --user import-environment DISPLAY XAUTHORITY XDG_CURRENT_DESKTOP
 exec --no-startup-id dbus-update-activation-environment --systemd DISPLAY XAUTHORITY XDG_CURRENT_DESKTOP WAYLAND_DISPLAY
 
-# Background running ec_mic
-exec --no-startup-id sh -c 'pactl unload-module module-echo-cancel 2>/dev/null; pactl load-module module-echo-cancel aec_method=webrtc source_name=ec_mic; sleep 1; pactl set-default-source ec_mic'
-
-# Chạy nền EasyEffects
 exec --no-startup-id sh -c '! pidof easyeffects >/dev/null && easyeffects --gapplication-service'
 
-# Chạy nền Pavucontrol
-#exec --no-startup-id pavucontrol --gapplication-service
-
-# Run Bluetooth applet
 exec --no-startup-id blueman-applet
 
-# Nạp preset sau 2 giây (đổi tên preset của bạn)
 exec --no-startup-id sh -c 'sleep 2; easyeffects -l "LoudnessCrystalEqualizer"'
 
-# Picom
 exec_always --no-startup-id picom -c ~/.config/picom/picom.conf
 
-# Nitrogen
-# exec_always --no-startup-id nitrogen --restore
 exec --no-startup-id ~/.config/i3/scripts/xwinwrap
 
-# Xborders
 exec_always --no-startup-id ~/.config/i3/scripts/xborders --border-radius 10 --border-width 3 --disable-version-warning --border-rgba "#cba6f7"
 
 # ────────────────────────────── 10. THANH BAR ──────────────────────────────
-# bar {
-#     height 23
-# 	  position bottom
-#     font pango:OperatorMono Nerd Font Bold 10
-#     status_command i3blocks 
-#     tray_padding 2
-#     strip_workspace_numbers yes
-#
-#     colors {
-#       # i3bar
-#       background        #272E33    # bg0
-#       statusline        #D3C6AA    # fg
-#       separator         #272E33    # bg0
-#
-#       #                  border     background  text
-#       focused_workspace  #A7C080    #2E383C     #D3C6AA    # green border, bg1, fg
-#       active_workspace   #272E33    #374145     #7FBBB3    # bg0 border, bg2, blue text
-#       inactive_workspace #272E33    #272E33     #859289    # bg0, gray1
-#       urgent_workspace   #E67E80    #272E33     #E67E80    # red
-#       binding_mode       #A7C080    #272E33     #DBBC7F    # yellow bg, dark text   
-#     }
-# }
-
-# bar {
-#     height 23
-#     position bottom
-#     font pango:OperatorMono Nerd Font Bold 10
-#     status_command i3blocks
-#     tray_padding 2
-#     strip_workspace_numbers yes
-#
-#     colors {
-#       # i3bar
-#       background        #1a1b26
-#       statusline        #c0caf5
-#       separator         #1a1b26
-#
-#       #                    border    background  text
-#       focused_workspace    #7aa2f7   #7aa2f7     #1a1b26
-#       active_workspace     #1a1b26   #292e42     #7dcfff
-#       inactive_workspace   #1a1b26   #1a1b26     #565f89
-#       urgent_workspace     #f7768e   #1a1b26     #f7768e
-#       binding_mode         #e0af68   #1a1b26     #e0af68
-#     }
-# }
-
 exec_always --no-startup-id ~/.config/polybar/candy/launch.sh
 
 # ───────────────────────────── 11. WINDOWS COLOR SETTINGS  ─────────────────
-## class                border   backgr.   text     indicator child_border
 client.focused          #7aa2f7  #7aa2f7   #7aa2f7  #7aa2f7   #7aa2f7
 client.unfocused        #1a1b26  #1a1b26   #1a1b26  #24283b   #24283b
 client.focused_inactive #414868  #1a1b26   #a9b1d6  #414868   #414868

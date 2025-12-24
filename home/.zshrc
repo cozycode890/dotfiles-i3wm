@@ -1,3 +1,7 @@
+if [[ -o interactive && -t 1 ]]; then
+  fastfetch --config arch.jsonc
+fi
+
 # =============================
 # 💤 Oh My Zsh & zsh-autocomplete
 # =============================
@@ -27,6 +31,7 @@ plugins=(
   zsh-syntax-highlighting
   zsh-autosuggestions
 )
+fpath=(/usr/share/zsh/site-functions $fpath)
 source "$ZSH/oh-my-zsh.sh"
 
 # =============================
@@ -92,6 +97,10 @@ alias ab="adb shell cmd package install-existing --user 0"
 
 alias lg="lazygit"
 
+alias fetch="fastfetch --config arch.jsonc"
+
+alias rm=gomi
+
 # =============================
 # 📂 Yazi cd helper
 # =============================
@@ -116,6 +125,8 @@ ZSH_HIGHLIGHT_STYLES[comment]='fg=8,dim'
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
 eval "$(fzf --zsh)"
+eval "$(gtrash completion zsh)"
+eval "$(gh completion -s zsh)"
 
 # =============================
 # 🚀 Tăng tốc đọc .zshrc (zcompile)

@@ -4,7 +4,7 @@
 set -u -o pipefail
 
 LOCKFILE="/tmp/video-wallpaper.lock"
-VIDEO="$HOME/Videos/wallpaper-new.mp4"
+VIDEO="$HOME/Videos/Wallpapers/wallpaper_2.mp4"
 GEOM="1920x1080+0+0"
 
 # ---------- Hàm tiện ích ----------
@@ -61,7 +61,15 @@ while :; do
   echo "Khởi động xwinwrap + mpv..."
 
   xwinwrap -b -ni -nf -ov -g "$GEOM" -- \
-    mpv --wid=%WID --loop --no-audio --no-osd-bar --panscan=1.0 \
+    mpv --wid=%WID \
+    --loop-file=inf \
+    --no-osd-bar \
+    --profile=low-latency \
+    --video-sync=display-resample \
+    --vo=gpu \
+    --gpu-context=x11 \
+    --hwdec=vaapi \
+    --vd-lavc-threads=1 \
     --no-border \
     --no-input-default-bindings \
     --input-vo-keyboard=no \
@@ -73,7 +81,6 @@ while :; do
   wait "$child_pid"
   status=$?
 
-  # Nếu thoát bình thường (status 0) => coi như user cố ý tắt, không restart
   if [[ "$status" -eq 0 ]]; then
     echo "xwinwrap/mpv thoát bình thường (status = 0), không restart."
     break
@@ -82,5 +89,3 @@ while :; do
     sleep 2
   fi
 done
-
-# Cleanup sẽ tự chạy nhờ trap EXIT
