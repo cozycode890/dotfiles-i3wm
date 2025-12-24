@@ -32,7 +32,7 @@ prepend_preloaders = [
   { name = "*.xlsx", run = "duckdb", multi = false },
 ]
 
-[mgr]
+[manager]
 sort_by = "natural"
 sort_reverse = false
 scrolloff = 5
